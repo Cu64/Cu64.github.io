@@ -1,0 +1,49 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Posts on Cu64</title>
+        <link>/posts/</link>
+        <description>Recent content in Posts on Cu64</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <copyright>Cu64</copyright>
+        <lastBuildDate>Wed, 17 Feb 2021 23:55:46 +0700</lastBuildDate>
+        <atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Public Amazon S3 Buckets and the risk of data leakage</title>
+            <link>/posts/public-aws-s3-buckets/</link>
+            <pubDate>Wed, 17 Feb 2021 23:55:46 +0700</pubDate>
+            
+            <guid>/posts/public-aws-s3-buckets/</guid>
+            <description>We&amp;rsquo;ve seen the recent CityBee leak from Lithuania (the report is on https://kernal.eu/). The main cause of this strategy is a misconfiguration of the Azure Blob Storage, allowing public unauthenticated access leading to the leakage of over 110,000 users&#39; information.
+So I was thinking, what if we could replicate this with Amazon S3 Buckets? And heck yeah it worked.
+So just like the steps shown on https://kernal.eu/posts/citybee-leak/ I will generate a list of domain names that belong to Amazon S3 Buckets.</description>
+            <content type="html"><![CDATA[<p>We&rsquo;ve seen the recent CityBee leak from Lithuania (the report is on <a href="https://kernal.eu/)">https://kernal.eu/)</a>. The main cause of this strategy is a misconfiguration of the Azure Blob Storage, allowing public unauthenticated access leading to the leakage of over 110,000 users' information.</p>
+<p>So I was thinking, what if we could replicate this with Amazon S3 Buckets? And heck yeah it worked.</p>
+<p>So just like the steps shown on <a href="https://kernal.eu/posts/citybee-leak/">https://kernal.eu/posts/citybee-leak/</a> I will generate a list of domain names that belong to Amazon S3 Buckets.</p>
+<h2 id="1-download-the-cname-database-from-rapid7-open-data-fdns">1. Download the CNAME database from Rapid7 Open Data FDNS</h2>
+<pre><code>wget https://opendata.rapid7.com/sonar.fdns_v2/2021-01-29-1611878713-fdns_cname.json.gz
+gunzip 2021-01-29-1611878713-fdns_cname.json.gz
+</code></pre><h2 id="2-cleaning-up-the-data">2. Cleaning up the data</h2>
+<pre><code>jq -r '.value' 2021-01-29-1611878713-fdns_cname.json &gt; cname.txt
+sort -u cname.txt -o cname.txt
+grep '\.s3\.' cname.txt &gt; aws.txt
+</code></pre><p>At this point we should have a list of domain names that belong to AWS S3 Buckets.</p>
+<h2 id="3-verifying-that-you-can-access-the-data">3. Verifying that you can access the data.</h2>
+<p>Now unlike the case with Azure Blob Storage, there&rsquo;s no need to brute force the directory or append GET parameters. At this point it&rsquo;s just checking if the domain still exists and allow access or not. I will accomplish this with the help of Project Discovery&rsquo;s <a href="https://github.com/projectdiscovery/httpx">httpx</a></p>
+<pre><code>httpx -l aws.txt -mc 200 -no-color -o aws_result.txt
+</code></pre><h2 id="4-listing-files-in-the-aws-s3-buckets">4. Listing files in the AWS S3 Buckets</h2>
+<p>To do this I went for the lazy route and asked the POSIX wizard - Stnby to create a script that&rsquo;d do it for me and this is what he came up with</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># get_aws_keys.sh</span>
+curl -s <span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span> | yq-xq -r <span style="color:#e6db74">&#39;.ListBucketResult.Contents[].Key&#39;</span> | xargs -L <span style="color:#ae81ff">1</span> printf <span style="color:#e6db74">&#39;%s/%s\n&#39;</span> <span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+</code></pre></div><p>This script will list all the files from the supplied AWS S3 Bucket URL. And to use this with our list, we simply need to run:</p>
+<pre><code>cat aws_result.txt | xargs -L 1 ./get_aws_keys.sh &gt; files.txt
+</code></pre><p>The resulting txt file will contain all of the public accessible files from all of the AWS S3 Buckets. At the time of writing this post, I managed to generate a list of over 170,000 files. Just think about it, all of this data is publicly available, now image the amount of damage that this could&rsquo;ve cause if someone decided that it&rsquo;ll be a great idea to put sensitive data on there or even worse, a database?</p>
+<h2 id="5-remediation">5. Remediation</h2>
+<p>Block access to private informations or don&rsquo;t store them on these storage services in the first place if it&rsquo;s not necessary.</p>
+<p>Well, that&rsquo;s all I&rsquo;ve got for you today, and we&rsquo;ll meet again in the next post. Stay safe and wear a mask.</p>
+]]></content>
+        </item>
+        
+    </channel>
+</rss>

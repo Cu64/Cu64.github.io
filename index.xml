@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cu64</title>
+    <link>/</link>
+    <description>Recent content on Cu64</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Cu64</copyright>
+    <lastBuildDate>Wed, 17 Feb 2021 23:55:46 +0700</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Public Amazon S3 Buckets and the risk of data leakage</title>
+      <link>/posts/public-aws-s3-buckets/</link>
+      <pubDate>Wed, 17 Feb 2021 23:55:46 +0700</pubDate>
+      
+      <guid>/posts/public-aws-s3-buckets/</guid>
+      <description>We&amp;rsquo;ve seen the recent CityBee leak from Lithuania (the report is on https://kernal.eu/). The main cause of this strategy is a misconfiguration of the Azure Blob Storage, allowing public unauthenticated access leading to the leakage of over 110,000 users&#39; information.
+So I was thinking, what if we could replicate this with Amazon S3 Buckets? And heck yeah it worked.
+So just like the steps shown on https://kernal.eu/posts/citybee-leak/ I will generate a list of domain names that belong to Amazon S3 Buckets.</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>/about/</link>
+      <pubDate>Wed, 17 Feb 2021 23:42:58 +0700</pubDate>
+      
+      <guid>/about/</guid>
+      <description>Hi, i&amp;rsquo;m Cu64, a young security researcher from Vietnam.
+I&amp;rsquo;m interested in web and mobile application penetration testing.
+This is my personal blog, the place where I&amp;rsquo;ll post on security, programming and other subjects. A copy of all the posts will also be available on https://kernal.eu/
+You can reach me via email at cu64@kernal.eu</description>
+    </item>
+    
+  </channel>
+</rss>
