@@ -6,42 +6,60 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <copyright>Cu64</copyright>
-        <lastBuildDate>Wed, 17 Feb 2021 23:55:46 +0700</lastBuildDate>
+        <lastBuildDate>Wed, 31 Mar 2021 21:30:08 +0700</lastBuildDate>
         <atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
         
         <item>
-            <title>Public Amazon S3 Buckets and the risk of data leakage</title>
-            <link>/posts/public-aws-s3-buckets/</link>
-            <pubDate>Wed, 17 Feb 2021 23:55:46 +0700</pubDate>
+            <title>0x01: OSINT: Nghệ thuật ShoGo</title>
+            <link>/posts/0x01-osint/</link>
+            <pubDate>Wed, 31 Mar 2021 21:30:08 +0700</pubDate>
             
-            <guid>/posts/public-aws-s3-buckets/</guid>
-            <description>We&amp;rsquo;ve seen the recent CityBee leak from Lithuania (the report is on https://kernal.eu/). The main cause of this strategy is a misconfiguration of the Azure Blob Storage, allowing public unauthenticated access leading to the leakage of over 110,000 users&#39; information.
-So I was thinking, what if we could replicate this with Amazon S3 Buckets? And heck yeah it worked.
-So just like the steps shown on https://kernal.eu/posts/citybee-leak/ I will generate a list of domain names that belong to Amazon S3 Buckets.</description>
-            <content type="html"><![CDATA[<p>We&rsquo;ve seen the recent CityBee leak from Lithuania (the report is on <a href="https://kernal.eu/)">https://kernal.eu/)</a>. The main cause of this strategy is a misconfiguration of the Azure Blob Storage, allowing public unauthenticated access leading to the leakage of over 110,000 users' information.</p>
-<p>So I was thinking, what if we could replicate this with Amazon S3 Buckets? And heck yeah it worked.</p>
-<p>So just like the steps shown on <a href="https://kernal.eu/posts/citybee-leak/">https://kernal.eu/posts/citybee-leak/</a> I will generate a list of domain names that belong to Amazon S3 Buckets.</p>
-<h2 id="1-download-the-cname-database-from-rapid7-open-data-fdns">1. Download the CNAME database from Rapid7 Open Data FDNS</h2>
-<pre><code>wget https://opendata.rapid7.com/sonar.fdns_v2/2021-01-29-1611878713-fdns_cname.json.gz
-gunzip 2021-01-29-1611878713-fdns_cname.json.gz
-</code></pre><h2 id="2-cleaning-up-the-data">2. Cleaning up the data</h2>
-<pre><code>jq -r '.value' 2021-01-29-1611878713-fdns_cname.json &gt; cname.txt
-sort -u cname.txt -o cname.txt
-grep '\.s3\.' cname.txt &gt; aws.txt
-</code></pre><p>At this point we should have a list of domain names that belong to AWS S3 Buckets.</p>
-<h2 id="3-verifying-that-you-can-access-the-data">3. Verifying that you can access the data.</h2>
-<p>Now unlike the case with Azure Blob Storage, there&rsquo;s no need to brute force the directory or append GET parameters. At this point it&rsquo;s just checking if the domain still exists and allow access or not. I will accomplish this with the help of Project Discovery&rsquo;s <a href="https://github.com/projectdiscovery/httpx">httpx</a></p>
-<pre><code>httpx -l aws.txt -mc 200 -no-color -o aws_result.txt
-</code></pre><h2 id="4-listing-files-in-the-aws-s3-buckets">4. Listing files in the AWS S3 Buckets</h2>
-<p>To do this I went for the lazy route and asked the POSIX wizard - Stnby to create a script that&rsquo;d do it for me and this is what he came up with</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># get_aws_keys.sh</span>
-curl -s <span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span> | yq-xq -r <span style="color:#e6db74">&#39;.ListBucketResult.Contents[].Key&#39;</span> | xargs -L <span style="color:#ae81ff">1</span> printf <span style="color:#e6db74">&#39;%s/%s\n&#39;</span> <span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
-</code></pre></div><p>This script will list all the files from the supplied AWS S3 Bucket URL. And to use this with our list, we simply need to run:</p>
-<pre><code>cat aws_result.txt | xargs -L 1 ./get_aws_keys.sh &gt; files.txt
-</code></pre><p>The resulting txt file will contain all of the public accessible files from all of the AWS S3 Buckets. At the time of writing this post, I managed to generate a list of over 170,000 files. Just think about it, all of this data is publicly available, now image the amount of damage that this could&rsquo;ve cause if someone decided that it&rsquo;ll be a great idea to put sensitive data on there or even worse, a database?</p>
-<h2 id="5-remediation">5. Remediation</h2>
-<p>Block access to private informations or don&rsquo;t store them on these storage services in the first place if it&rsquo;s not necessary.</p>
-<p>Well, that&rsquo;s all I&rsquo;ve got for you today, and we&rsquo;ll meet again in the next post. Stay safe and wear a mask.</p>
+            <guid>/posts/0x01-osint/</guid>
+            <description>Có lẽ bạn đã quá đỗi quen thuộc với cái tên Google rồi, một công cụ tìm kiếm mạnh mẽ với khả năng tìm kiếm hàng triệu kết quả với thời gian ngắn ngủi chưa đầy 1 giây. Đây cũng là lý do nhiều tin tặc ưa dùng Google cho việc OSINT (Open-Source INTelligence hay Thu thập thông tin nguồn mở). Nhưng bên cạnh công cụ tìm kiếm ai ai cũng biết thì còn có Shodan, thường được coi là Google cho các tin tặc.</description>
+            <content type="html"><![CDATA[<p>Có lẽ bạn đã quá đỗi quen thuộc với cái tên Google rồi, một công cụ tìm kiếm mạnh mẽ với khả năng tìm kiếm hàng triệu kết quả với thời gian ngắn ngủi chưa đầy 1 giây. Đây cũng là lý do nhiều tin tặc ưa dùng Google cho việc OSINT (<strong>O</strong>pen-<strong>S</strong>ource <strong>INT</strong>elligence hay Thu thập thông tin nguồn mở). Nhưng bên cạnh công cụ tìm kiếm ai ai cũng biết thì còn có Shodan, thường được coi là Google cho các tin tặc.</p>
+<h1 id="google">Google</h1>
+<p>Có lẽ bây giờ sẽ có nhiều bạn đọc tự hỏi tại sao chúng ta có thể sử dụng Google - một công cụ tìm kiếm để tấn công một mục tiêu nào đó. Câu trả lời cho việc này hết sức đơn giản: tri thức là sức mạnh. Khả năng tìm kiếm mạnh mẽ toàn internet của Google chính là lý do khiến cho nó trở thành công cụ hữu ích trong bộ đồ nghề của một tin tặc.</p>
+<p>Chỉ với Google, bạn có thể tìm hàng loạt thông tin như: file log, những lỗ hổng bảo mật trong các website, camera trực tiếp và thậm chí là chiếm quyền admin của các website với bảo mật kém. Để đạt được điều này thì những kẻ tấn công sẽ sử dụng những từ khóa tìm kiếm đặc biệt ví dụ như<code>intext:&quot;user name&quot; intext:&quot;orion core&quot; -solarwinds.com</code>để tìm những máy chủ SolarWinds Orion có lỗ hổng bảo mật. Hàng nghìn những từ khóa như vậy đều được lưu lại trên <a href="https://www.exploit-db.com/google-hacking-database">GHDB</a>.</p>
+<p>Một ví dụ đơn giản hơn là việc tìm kiếu thông tin riêng tư được lưu trên các file Google Docs:</p>
+<figure>
+    <img src="1.png"/> <figcaption>
+            <h4>Tìm kiếm danh sách học viên trên Google</h4>
+        </figcaption>
+</figure>
+
+<p>Mặc dù lượng thông tin ở đây khá ít và đã quá cũ nhưng như thế cũng đã đủ để chứng minh sức mạnh phi thường của Google.</p>
+<figure>
+    <img src="2.png"/> 
+</figure>
+
+<h1 id="shodan">Shodan</h1>
+<p>Ngoài Google ra thì Shodan cũng là một công cụ được ưa chuộng bởi giới hacker. Khác với Google, thay vì chỉ tập trung vào các website thì Shodan tập trung vào việc thu thập mọi thông tin từ mọi port trên mọi thiết bị trên mạng. Việc này tương tự với việc chạy nmap với mọi port trên mọi thiết bị trên internet vậy. Chính vì lý do này mà Shodan là cộng cụ mạnh hơn Google rất nhiều, ngoài việc tìm kiếm các website, Shodan còn có khả năng tìm các dịch vụ SSH, Telnel, SQL và thậm chí là các proxy.</p>
+<figure>
+    <img src="3.png"/> <figcaption>
+            <h4>Một số từ khóa tìm kiếm phổ biến trên Shodan</h4>
+        </figcaption>
+</figure>
+
+<p>Ngoài việc cung cấp các thông tin chi tiết, Shodan còn có thể hiển thị những lỗ hổng bảo mật của server qua việc đối chiếu số phiên bản. Bằng các tính năng tiện lợi trên thì việc Shodan được tin dùng làm công cụ tấn công cũng dễ hiểu.</p>
+<p>Để minh họa sức mạnh của Shodan, chúng ta hãy tìm kiếm và tấn công một máy chủ VPS qua VNC. Bước đầu tiên là tìm một mục tiêu không có mật khẩu cho VNC bằng query sau: <code>&quot;authentication disabled&quot; &quot;RFB 003.008&quot;</code></p>
+<figure>
+    <img src="4.png"/> <figcaption>
+            <h4>Kết quả tìm kiếm chứa hơn 6800 kết quả</h4>
+        </figcaption>
+</figure>
+
+<p>Bước tiếp theo là kết nối với một máy chủ không có mật khẩu qua VNC (ảnh lấy từ <a href="https://kernal.eu/posts/hacking-vnc-vms">kernal.eu</a>)</p>
+<figure>
+    <img src="5.png"/> 
+</figure>
+
+<p>Và chỉnh sửa boot params để lấy shell root không cần mật khẩu</p>
+<figure>
+    <img src="6.png"/> 
+</figure>
+
+<p>Và chỉ với vài bước đơn giản, chúng ta đã thành công tấm công và chiếm quyền root của một máy chủ VPS với Shodan.</p>
+<p>Cảm ơn các bạn đã dành thời gian để đọc bài viết, hãy giữ an toàn cho bản thân và những người xung quanh trên môi trường mạng.</p>
 ]]></content>
         </item>
         

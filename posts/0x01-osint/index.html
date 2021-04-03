@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="Có lẽ bạn đã quá đỗi quen thuộc với cái tên Google rồi, một công cụ tìm kiếm mạnh mẽ với khả năng tìm kiếm hàng triệu kết quả với thời gian ngắn ngủi chưa đầy 1 giây. Đây cũng là lý do nhiều tin tặc ưa dùng Google cho việc OSINT (Open-Source INTelligence hay Thu thập thông tin nguồn mở). Nhưng bên cạnh công cụ tìm kiếm ai ai cũng biết thì còn có Shodan, thường được coi là Google cho các tin tặc." />
+<meta name="keywords" content=", 30ngayattt" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="/posts/0x01-osint/" />
+
+
+    <title>
+        
+            0x01: OSINT: Nghệ thuật ShoGo :: Cu64 
+        
+    </title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.d7bdd8ee18bfbf4c605488a7e5b1b92cd980dfeed2bdaeab4dd5e931a7a78bc0.css">
+
+
+
+
+
+
+<meta itemprop="name" content="0x01: OSINT: Nghệ thuật ShoGo">
+<meta itemprop="description" content="Có lẽ bạn đã quá đỗi quen thuộc với cái tên Google rồi, một công cụ tìm kiếm mạnh mẽ với khả năng tìm kiếm hàng triệu kết quả với thời gian ngắn ngủi chưa đầy 1 giây. Đây cũng là lý do nhiều tin tặc ưa dùng Google cho việc OSINT (Open-Source INTelligence hay Thu thập thông tin nguồn mở). Nhưng bên cạnh công cụ tìm kiếm ai ai cũng biết thì còn có Shodan, thường được coi là Google cho các tin tặc.">
+<meta itemprop="datePublished" content="2021-03-31T21:30:08+07:00" />
+<meta itemprop="dateModified" content="2021-03-31T21:30:08+07:00" />
+<meta itemprop="wordCount" content="615">
+<meta itemprop="image" content="/"/>
+
+
+
+<meta itemprop="keywords" content="30ngayattt," />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="0x01: OSINT: Nghệ thuật ShoGo"/>
+<meta name="twitter:description" content="Có lẽ bạn đã quá đỗi quen thuộc với cái tên Google rồi, một công cụ tìm kiếm mạnh mẽ với khả năng tìm kiếm hàng triệu kết quả với thời gian ngắn ngủi chưa đầy 1 giây. Đây cũng là lý do nhiều tin tặc ưa dùng Google cho việc OSINT (Open-Source INTelligence hay Thu thập thông tin nguồn mở). Nhưng bên cạnh công cụ tìm kiếm ai ai cũng biết thì còn có Shodan, thường được coi là Google cho các tin tặc."/>
+
+
+
+
+    <meta property="og:title" content="0x01: OSINT: Nghệ thuật ShoGo" />
+<meta property="og:description" content="Có lẽ bạn đã quá đỗi quen thuộc với cái tên Google rồi, một công cụ tìm kiếm mạnh mẽ với khả năng tìm kiếm hàng triệu kết quả với thời gian ngắn ngủi chưa đầy 1 giây. Đây cũng là lý do nhiều tin tặc ưa dùng Google cho việc OSINT (Open-Source INTelligence hay Thu thập thông tin nguồn mở). Nhưng bên cạnh công cụ tìm kiếm ai ai cũng biết thì còn có Shodan, thường được coi là Google cho các tin tặc." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/0x01-osint/" />
+<meta property="og:image" content="/"/>
+<meta property="article:published_time" content="2021-03-31T21:30:08+07:00" />
+<meta property="article:modified_time" content="2021-03-31T21:30:08+07:00" /><meta property="og:site_name" content="Cu64" />
+
+
+
+
+
+
+    <meta property="article:published_time" content="2021-03-31 21:30:08 &#43;0700 &#43;07" />
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">Cu64</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about">About</a></li><li><a href="/posts">Posts</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        3 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="/posts/0x01-osint/">0x01: OSINT: Nghệ thuật ShoGo</a>
+      </h1>
+
+      
+
+      
+
+      <div class="post-content">
+        <p>Có lẽ bạn đã quá đỗi quen thuộc với cái tên Google rồi, một công cụ tìm kiếm mạnh mẽ với khả năng tìm kiếm hàng triệu kết quả với thời gian ngắn ngủi chưa đầy 1 giây. Đây cũng là lý do nhiều tin tặc ưa dùng Google cho việc OSINT (<strong>O</strong>pen-<strong>S</strong>ource <strong>INT</strong>elligence hay Thu thập thông tin nguồn mở). Nhưng bên cạnh công cụ tìm kiếm ai ai cũng biết thì còn có Shodan, thường được coi là Google cho các tin tặc.</p>
+<h1 id="google">Google</h1>
+<p>Có lẽ bây giờ sẽ có nhiều bạn đọc tự hỏi tại sao chúng ta có thể sử dụng Google - một công cụ tìm kiếm để tấn công một mục tiêu nào đó. Câu trả lời cho việc này hết sức đơn giản: tri thức là sức mạnh. Khả năng tìm kiếm mạnh mẽ toàn internet của Google chính là lý do khiến cho nó trở thành công cụ hữu ích trong bộ đồ nghề của một tin tặc.</p>
+<p>Chỉ với Google, bạn có thể tìm hàng loạt thông tin như: file log, những lỗ hổng bảo mật trong các website, camera trực tiếp và thậm chí là chiếm quyền admin của các website với bảo mật kém. Để đạt được điều này thì những kẻ tấn công sẽ sử dụng những từ khóa tìm kiếm đặc biệt ví dụ như<code>intext:&quot;user name&quot; intext:&quot;orion core&quot; -solarwinds.com</code>để tìm những máy chủ SolarWinds Orion có lỗ hổng bảo mật. Hàng nghìn những từ khóa như vậy đều được lưu lại trên <a href="https://www.exploit-db.com/google-hacking-database">GHDB</a>.</p>
+<p>Một ví dụ đơn giản hơn là việc tìm kiếu thông tin riêng tư được lưu trên các file Google Docs:</p>
+<figure>
+    <img src="1.png"/> <figcaption>
+            <h4>Tìm kiếm danh sách học viên trên Google</h4>
+        </figcaption>
+</figure>
+
+<p>Mặc dù lượng thông tin ở đây khá ít và đã quá cũ nhưng như thế cũng đã đủ để chứng minh sức mạnh phi thường của Google.</p>
+<figure>
+    <img src="2.png"/> 
+</figure>
+
+<h1 id="shodan">Shodan</h1>
+<p>Ngoài Google ra thì Shodan cũng là một công cụ được ưa chuộng bởi giới hacker. Khác với Google, thay vì chỉ tập trung vào các website thì Shodan tập trung vào việc thu thập mọi thông tin từ mọi port trên mọi thiết bị trên mạng. Việc này tương tự với việc chạy nmap với mọi port trên mọi thiết bị trên internet vậy. Chính vì lý do này mà Shodan là cộng cụ mạnh hơn Google rất nhiều, ngoài việc tìm kiếm các website, Shodan còn có khả năng tìm các dịch vụ SSH, Telnel, SQL và thậm chí là các proxy.</p>
+<figure>
+    <img src="3.png"/> <figcaption>
+            <h4>Một số từ khóa tìm kiếm phổ biến trên Shodan</h4>
+        </figcaption>
+</figure>
+
+<p>Ngoài việc cung cấp các thông tin chi tiết, Shodan còn có thể hiển thị những lỗ hổng bảo mật của server qua việc đối chiếu số phiên bản. Bằng các tính năng tiện lợi trên thì việc Shodan được tin dùng làm công cụ tấn công cũng dễ hiểu.</p>
+<p>Để minh họa sức mạnh của Shodan, chúng ta hãy tìm kiếm và tấn công một máy chủ VPS qua VNC. Bước đầu tiên là tìm một mục tiêu không có mật khẩu cho VNC bằng query sau: <code>&quot;authentication disabled&quot; &quot;RFB 003.008&quot;</code></p>
+<figure>
+    <img src="4.png"/> <figcaption>
+            <h4>Kết quả tìm kiếm chứa hơn 6800 kết quả</h4>
+        </figcaption>
+</figure>
+
+<p>Bước tiếp theo là kết nối với một máy chủ không có mật khẩu qua VNC (ảnh lấy từ <a href="https://kernal.eu/posts/hacking-vnc-vms">kernal.eu</a>)</p>
+<figure>
+    <img src="5.png"/> 
+</figure>
+
+<p>Và chỉnh sửa boot params để lấy shell root không cần mật khẩu</p>
+<figure>
+    <img src="6.png"/> 
+</figure>
+
+<p>Và chỉ với vài bước đơn giản, chúng ta đã thành công tấm công và chiếm quyền root của một máy chủ VPS với Shodan.</p>
+<p>Cảm ơn các bạn đã dành thời gian để đọc bài viết, hãy giữ an toàn cho bản thân và những người xung quanh trên môi trường mạng.</p>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="/tags/30ngayattt/">30ngayattt</a></span>
+        
+    </p>
+
+      
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        615 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2021-03-31
+        
+
+         
+          
+        
+      </p>
+    </div>
+
+    
+
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2021</span>
+            
+            <span>Cu64</span><span><a href="/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="/bundle.min.f8557eb670466aea7eb983f6a8375609ad7dba5617c969fdfdf8cb4dbf82c1e47c35c2ca3b26098578653cadac3390ddaa64ccdf5791e295d64bef255c68a96b.js" integrity="sha512-&#43;FV&#43;tnBGaup&#43;uYP2qDdWCa19ulYXyWn9/fjLTb&#43;CweR8NcLKOyYJhXhlPK2sM5DdqmTM31eR4pXWS&#43;8lXGipaw=="></script>
+
+
+
+    </body>
+</html>
