@@ -9,12 +9,12 @@
     <copyright>Cu64</copyright>
     <lastBuildDate>Sun, 04 Apr 2021 12:24:32 +0700</lastBuildDate><atom:link href="/tags/30ngayattt/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>0x02: Penetest bằng Devtools</title>
+      <title>0x02: Pentest bằng Devtools</title>
       <link>/posts/0x02-webdevpentesttools/</link>
       <pubDate>Sun, 04 Apr 2021 12:24:32 +0700</pubDate>
       
       <guid>/posts/0x02-webdevpentesttools/</guid>
-      <description>Có lẽ nhiều người khi nghe đến cụm từ hacker sẽ nghĩ ngay đến những người mặc hoodie trong phòng tối với dòng lệnh nền đen chữ xanh cùng một số lớn công cụ phức tạp (sqlmap, Sitadel, hacktool). Nhưng sự thực nó khác xa với mong đợi nhiều, và trong bài hôm nay, tôi sẽ chứng tỏ điều đó bằng cách tấn công một website chỉ với Website Developer Tools của trình duyệt Firefox và không gì khác.</description>
+      <description>Có lẽ nhiều người khi nghe đến cụm từ hacker sẽ nghĩ ngay đến những người mặc hoodie trong phòng tối với dòng lệnh nền đen chữ xanh cùng một số lớn công cụ phức tạp (sqlmap, Sitadel, hacktool,..). Nhưng sự thực nó khác xa với mong đợi nhiều, và trong bài hôm nay, tôi sẽ chứng tỏ điều đó bằng cách tấn công một website chỉ với Website Developer Tools của trình duyệt Firefox và không gì khác.</description>
     </item>
     
     <item>
