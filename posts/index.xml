@@ -6,8 +6,58 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <copyright>Cu64</copyright>
-        <lastBuildDate>Sun, 04 Apr 2021 12:24:32 +0700</lastBuildDate>
+        <lastBuildDate>Mon, 19 Apr 2021 23:52:41 +0700</lastBuildDate>
         <atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>0x03: Tấn công các thiết bị Android với ADB</title>
+            <link>/posts/0x03-adbattack/</link>
+            <pubDate>Mon, 19 Apr 2021 23:52:41 +0700</pubDate>
+            
+            <guid>/posts/0x03-adbattack/</guid>
+            <description>Theo thông tin từ trang chủ (https://developer.android.com/) ADB hay Android Debug là một công cụ chạy dưới dạng dòng lệnh, cho phép người dùng quản lý tác vụ, chẳng hạn như cài đặt và gỡ lỗi ứng dụng, đồng thời nó cung cấp quyền truy cập vào hệ điều hành trên thiết bị Android.
+ADB bao gồm 3 thành phần chính:
+ Client, dùng để gửi các câu lệnh Daemon (adbd), dịch vụ ADB chạy ngầm trên các thiết bị Server, quản lý giao tiếp giữa Client và Daemon  Thông thường, các nhà phát triển kết nối với dịch vụ ADB được cài đặt trên Android bằng cáp USB, nhưng cũng có thể sử dụng ADB không dây bằng cách bật máy chủ daemon tại cổng TCP 5555 trên thiết bị.</description>
+            <content type="html"><![CDATA[<p>Theo thông tin từ trang chủ (<a href="https://developer.android.com/">https://developer.android.com/</a>) ADB hay Android Debug là một công cụ chạy dưới dạng dòng lệnh, cho phép người dùng quản lý tác vụ, chẳng hạn như cài đặt và gỡ lỗi ứng dụng, đồng thời nó cung cấp quyền truy cập vào hệ điều hành trên thiết bị Android.</p>
+<p>ADB bao gồm 3 thành phần chính:</p>
+<ol>
+<li>Client, dùng để gửi các câu lệnh</li>
+<li>Daemon (adbd), dịch vụ ADB chạy ngầm trên các thiết bị</li>
+<li>Server, quản lý giao tiếp giữa Client và Daemon</li>
+</ol>
+<p>Thông thường, các nhà phát triển kết nối với dịch vụ ADB được cài đặt trên Android bằng cáp USB, nhưng cũng có thể sử dụng ADB không dây bằng cách bật máy chủ daemon tại cổng TCP 5555 trên thiết bị. Lợi dụng điểm yếu này, kẻ tấn công có thể lạm dụng và qua đó, kiểm soát các kết nối ADB qua cổng TCP 5555.</p>
+<p>Tại Shodan, tiến hành tìm kiếm với từ khóa: <code>product:”Android Debug Bridge”</code></p>
+<figure>
+    <img src="2021-04-19_13-37.png"/> 
+</figure>
+
+<p>Ta có được 2875 kết quả, đây là các thiết bị đang chạy dịch vụ ADB.</p>
+<p>Kẻ tấn công có thể truy cập trái phép một thiết bị thông qua các câu lệnh như:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">adb connect IP
+</code></pre></div><p>Với IP là thông tin địa chỉ mạng của mục tiêu.</p>
+<figure>
+    <img src="2021-04-19_13-38.png"/> 
+</figure>
+
+<figure>
+    <img src="2021-04-19_13-39.png"/> 
+</figure>
+
+<p>Với nhiều mục tiêu, ta có thể tự động hóa việc tấn công bằng cách, chuẩn bị thông tin mục tiêu, sau đó lập trình các đoạn kịch bản tự động tấn công như sau.</p>
+<figure>
+    <img src="2021-04-19_13-39_1.png"/> 
+</figure>
+
+<p>Mã nguồn adb_attack.sh</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#66d9ef">for</span> target in <span style="color:#66d9ef">$(</span>cat target.txt<span style="color:#66d9ef">)</span>
+<span style="color:#66d9ef">do</span>
+	adb connect $target
+<span style="color:#66d9ef">done</span>
+</code></pre></div><p>Như vậy, chỉ với một vài bước, kẻ tấn công đã có thể truy cập được hàng ngàn thiết bị Android.</p>
+<p>Để phòng chống dạng tấn công này, hãy kiểm tra lại các thiết bị thông minh trong nhà, disable tất cả các dịch vụ, cổng mạng không cần thiết và nâng cao nhận thức an ninh mạng.</p>
+<h1 id="lolong">Lolong</h1>
+]]></content>
+        </item>
         
         <item>
             <title>0x02: Pentest bằng Devtools</title>

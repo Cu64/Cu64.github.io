@@ -3,22 +3,27 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/posts/0x03-adbattack/</loc>
+    <lastmod>2021-04-19T23:52:41+07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/</loc>
+    <lastmod>2021-04-19T23:52:41+07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/posts/</loc>
+    <lastmod>2021-04-19T23:52:41+07:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/posts/0x02-webdevpentesttools/</loc>
     <lastmod>2021-04-04T12:24:32+07:00</lastmod>
   </url>
   
   <url>
     <loc>/tags/30ngayattt/</loc>
-    <lastmod>2021-04-04T12:24:32+07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/</loc>
-    <lastmod>2021-04-04T12:24:32+07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/posts/</loc>
     <lastmod>2021-04-04T12:24:32+07:00</lastmod>
   </url>
   
