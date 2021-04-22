@@ -14,7 +14,7 @@
       <pubDate>Mon, 19 Apr 2021 23:52:41 +0700</pubDate>
       
       <guid>/posts/0x03-adbattack/</guid>
-      <description>Theo thông tin từ trang chủ (https://developer.android.com/) ADB hay Android Debug là một công cụ chạy dưới dạng dòng lệnh, cho phép người dùng quản lý tác vụ, chẳng hạn như cài đặt và gỡ lỗi ứng dụng, đồng thời nó cung cấp quyền truy cập vào hệ điều hành trên thiết bị Android.
+      <description>Theo thông tin từ trang chủ developer.android.com ADB hay Android Debug là một công cụ chạy dưới dạng dòng lệnh, cho phép người dùng quản lý tác vụ, chẳng hạn như cài đặt và gỡ lỗi ứng dụng, đồng thời nó cung cấp quyền truy cập vào hệ điều hành trên thiết bị Android.
 ADB bao gồm 3 thành phần chính:
  Client, dùng để gửi các câu lệnh Daemon (adbd), dịch vụ ADB chạy ngầm trên các thiết bị Server, quản lý giao tiếp giữa Client và Daemon  Thông thường, các nhà phát triển kết nối với dịch vụ ADB được cài đặt trên Android bằng cáp USB, nhưng cũng có thể sử dụng ADB không dây bằng cách bật máy chủ daemon tại cổng TCP 5555 trên thiết bị.</description>
     </item>

@@ -14,7 +14,7 @@
       <pubDate>Mon, 19 Apr 2021 23:52:41 +0700</pubDate>
       
       <guid>/posts/0x03-adbattack/</guid>
-      <description>Theo thông tin từ trang chủ (https://developer.android.com/) ADB hay Android Debug là một công cụ chạy dưới dạng dòng lệnh, cho phép người dùng quản lý tác vụ, chẳng hạn như cài đặt và gỡ lỗi ứng dụng, đồng thời nó cung cấp quyền truy cập vào hệ điều hành trên thiết bị Android.
+      <description>Theo thông tin từ trang chủ developer.android.com ADB hay Android Debug là một công cụ chạy dưới dạng dòng lệnh, cho phép người dùng quản lý tác vụ, chẳng hạn như cài đặt và gỡ lỗi ứng dụng, đồng thời nó cung cấp quyền truy cập vào hệ điều hành trên thiết bị Android.
 ADB bao gồm 3 thành phần chính:
  Client, dùng để gửi các câu lệnh Daemon (adbd), dịch vụ ADB chạy ngầm trên các thiết bị Server, quản lý giao tiếp giữa Client và Daemon  Thông thường, các nhà phát triển kết nối với dịch vụ ADB được cài đặt trên Android bằng cáp USB, nhưng cũng có thể sử dụng ADB không dây bằng cách bật máy chủ daemon tại cổng TCP 5555 trên thiết bị.</description>
     </item>
@@ -35,6 +35,18 @@ ADB bao gồm 3 thành phần chính:
       
       <guid>/posts/0x01-osint/</guid>
       <description>Có lẽ bạn đã quá đỗi quen thuộc với cái tên Google rồi, một công cụ tìm kiếm mạnh mẽ với khả năng tìm kiếm hàng triệu kết quả với thời gian ngắn ngủi chưa đầy 1 giây. Đây cũng là lý do nhiều tin tặc ưa dùng Google cho việc OSINT (Open-Source INTelligence hay Thu thập thông tin nguồn mở). Nhưng bên cạnh công cụ tìm kiếm ai ai cũng biết thì còn có Shodan, thường được coi là Google cho các tin tặc.</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>/about/</link>
+      <pubDate>Wed, 17 Feb 2021 23:42:58 +0700</pubDate>
+      
+      <guid>/about/</guid>
+      <description>Hi, I&amp;rsquo;m Duong Tieu Dong (aka Cu64), a young security researcher from Vietnam who is currently studying at Phan Dinh Phung High School.
+I&amp;rsquo;m interested in web and mobile application penetration testing.
+This is my personal blog, the place where I&amp;rsquo;ll post on security, programming and other subjects. A copy of all the posts will also be available on kernal.eu
+You can reach me via email at cu64@kernal.eu</description>
     </item>
     
   </channel>
