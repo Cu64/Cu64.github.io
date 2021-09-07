@@ -1,225 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-    <channel>
-        <title>Posts on Cu64</title>
-        <link>/posts/</link>
-        <description>Recent content in Posts on Cu64</description>
-        <generator>Hugo -- gohugo.io</generator>
-        <language>en-us</language>
-        <copyright>Cu64</copyright>
-        <lastBuildDate>Mon, 19 Apr 2021 23:52:41 +0700</lastBuildDate>
-        <atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
-        
-        <item>
-            <title>0x03: Tấn công các thiết bị Android với ADB</title>
-            <link>/posts/0x03-adbattack/</link>
-            <pubDate>Mon, 19 Apr 2021 23:52:41 +0700</pubDate>
-            
-            <guid>/posts/0x03-adbattack/</guid>
-            <description>Theo thông tin từ trang chủ developer.android.com ADB hay Android Debug là một công cụ chạy dưới dạng dòng lệnh, cho phép người dùng quản lý tác vụ, chẳng hạn như cài đặt và gỡ lỗi ứng dụng, đồng thời nó cung cấp quyền truy cập vào hệ điều hành trên thiết bị Android.
-ADB bao gồm 3 thành phần chính:
- Client, dùng để gửi các câu lệnh Daemon (adbd), dịch vụ ADB chạy ngầm trên các thiết bị Server, quản lý giao tiếp giữa Client và Daemon  Thông thường, các nhà phát triển kết nối với dịch vụ ADB được cài đặt trên Android bằng cáp USB, nhưng cũng có thể sử dụng ADB không dây bằng cách bật máy chủ daemon tại cổng TCP 5555 trên thiết bị.</description>
-            <content type="html"><![CDATA[<p>Theo thông tin từ trang chủ <a href="https://developer.android.com/">developer.android.com</a> ADB hay Android Debug là một công cụ chạy dưới dạng dòng lệnh, cho phép người dùng quản lý tác vụ, chẳng hạn như cài đặt và gỡ lỗi ứng dụng, đồng thời nó cung cấp quyền truy cập vào hệ điều hành trên thiết bị Android.</p>
-<p>ADB bao gồm 3 thành phần chính:</p>
-<ol>
-<li>Client, dùng để gửi các câu lệnh</li>
-<li>Daemon (adbd), dịch vụ ADB chạy ngầm trên các thiết bị</li>
-<li>Server, quản lý giao tiếp giữa Client và Daemon</li>
-</ol>
-<p>Thông thường, các nhà phát triển kết nối với dịch vụ ADB được cài đặt trên Android bằng cáp USB, nhưng cũng có thể sử dụng ADB không dây bằng cách bật máy chủ daemon tại cổng TCP 5555 trên thiết bị. Lợi dụng điểm yếu này, kẻ tấn công có thể lạm dụng và qua đó, kiểm soát các kết nối ADB qua cổng TCP 5555.</p>
-<p>Tại Shodan, tiến hành tìm kiếm với từ khóa: <code>product:”Android Debug Bridge”</code></p>
-<figure>
-    <img src="2021-04-19_13-37.png"/> 
-</figure>
-
-<p>Ta có được 2875 kết quả, đây là các thiết bị đang chạy dịch vụ ADB.</p>
-<p>Kẻ tấn công có thể truy cập trái phép một thiết bị thông qua các câu lệnh như:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">adb connect IP
-</code></pre></div><p>Với IP là thông tin địa chỉ mạng của mục tiêu.</p>
-<figure>
-    <img src="2021-04-19_13-38.png"/> 
-</figure>
-
-<figure>
-    <img src="2021-04-19_13-39.png"/> 
-</figure>
-
-<p>Với nhiều mục tiêu, ta có thể tự động hóa việc tấn công bằng cách, chuẩn bị thông tin mục tiêu, sau đó lập trình các đoạn kịch bản tự động tấn công như sau.</p>
-<figure>
-    <img src="2021-04-19_13-39_1.png"/> 
-</figure>
-
-<p>Mã nguồn adb_attack.sh</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#66d9ef">for</span> target in <span style="color:#66d9ef">$(</span>cat target.txt<span style="color:#66d9ef">)</span>
-<span style="color:#66d9ef">do</span>
-	adb connect $target
-<span style="color:#66d9ef">done</span>
-</code></pre></div><p>Như vậy, chỉ với một vài bước, kẻ tấn công đã có thể truy cập được hàng ngàn thiết bị Android.</p>
-<p>Để phòng chống dạng tấn công này, hãy kiểm tra lại các thiết bị thông minh trong nhà, disable tất cả các dịch vụ, cổng mạng không cần thiết và nâng cao nhận thức an ninh mạng.</p>
-<h1 id="lolong">Lolong</h1>
-]]></content>
-        </item>
-        
-        <item>
-            <title>0x02: Pentest bằng Devtools</title>
-            <link>/posts/0x02-webdevpentesttools/</link>
-            <pubDate>Sun, 04 Apr 2021 12:24:32 +0700</pubDate>
-            
-            <guid>/posts/0x02-webdevpentesttools/</guid>
-            <description>Có lẽ nhiều người khi nghe đến cụm từ hacker sẽ nghĩ ngay đến những người mặc hoodie trong phòng tối với dòng lệnh nền đen chữ xanh cùng một số lớn công cụ phức tạp (sqlmap, Sitadel, hacktool,..). Nhưng sự thực nó khác xa với mong đợi nhiều, và trong bài hôm nay, tôi sẽ chứng tỏ điều đó bằng cách tấn công một website chỉ với Website Developer Tools của trình duyệt Firefox và không gì khác.</description>
-            <content type="html"><![CDATA[<p>Có lẽ nhiều người khi nghe đến cụm từ hacker sẽ nghĩ ngay đến những người mặc hoodie trong phòng tối với dòng lệnh nền đen chữ xanh cùng một số lớn công cụ phức tạp (sqlmap, Sitadel, hacktool,..). Nhưng sự thực nó khác xa với mong đợi nhiều, và trong bài hôm nay, tôi sẽ chứng tỏ điều đó bằng cách tấn công một website chỉ với Website Developer Tools của trình duyệt Firefox và không gì khác.</p>
-<p>Trước tiên, ta cần hiểu Devtools gồm những gì và cách sử dụng của từng bộ phận ra sao.</p>
-<p>Devtools của Firefox bao gồm:</p>
-<ul>
-<li>Page Inspector (xem, chỉnh sửa nội dung và bố cục trang)</li>
-<li>Web Console (xem các thông báo được ghi lại bởi trang web và tương tác với trang bằng JavaScript)</li>
-<li>JavaScript Debugger (Stop, step through, kiểm tra và sửa đổi code JavaScript đang chạy trên trang)</li>
-<li>Network Monitor (Xem các request được thực hiện khi một trang được tải)</li>
-<li>Performance Tools (Phân tích hiệu suất, JavaScript và bố cục chung của trang web)</li>
-<li>Responsive Design Mode (Xem giao diện, cách hoạt động của trang web trên các thiết bị khác nhau)</li>
-<li>Accessibility inspector (Kiểm tra trợ năng của trang)</li>
-<li>Application panel (Các công cụ để kiểm tra và gỡ lỗi các ứng dụng web hiện đại (PWA)).</li>
-</ul>
-<p>Trong bài viết hôm nay thì chúng ta sẽ tập trung vào 2 công cụ: <strong>Page Inspector</strong> và <strong>Storage Inspector</strong>. Để minh họa cách sử dụng của 2 công cụ này, chúng ta cùng đến với ví dụ tại CTF của HackerOne.</p>
-<h2 id="flag-0">Flag 0</h2>
-<figure>
-    <img src="2021-04-07_19-04.png"/> <figcaption>
-            <h4>Thử thách &#39;Postbook&#39; trên Hacker101 CTF</h4>
-        </figcaption>
-</figure>
-
-<figure>
-    <img src="2021-04-07_19-06.png"/> <figcaption>
-            <h4>Trang chính của thử thách</h4>
-        </figcaption>
-</figure>
-
-<p>Gợi ý đầu tiên được cung cấp cho chúng ta là việc người dùng &ldquo;user&rdquo; có mật khẩu rất yếu nên ta hãy thử đăng nhập bằng người dùng &ldquo;user&rdquo; với một mật khẩu yếu lấy từ danh sách những mật khẩu yếu.</p>
-<figure>
-    <img src="2021-04-07_19-09.png"/> 
-</figure>
-
-<p>Và như vậy, chúng ta đã lấy được flag đầu tiên của thử thách Postbook này:</p>
-<figure>
-    <img src="2021-04-07_19-10.png"/> 
-</figure>
-
-<h2 id="flag-1">Flag 1</h2>
-<p>Chúng ta được cho gợi ý là &ldquo;xem bài viết của bạn và thử thay đổi ID&rdquo; nên hãy làm theo và mở một bài viết trong trình duyệt:</p>
-<figure>
-    <img src="2021-04-07_19-38.png"/> 
-</figure>
-
-<p>và rồi thử thay đổi con số đằng sau id=</p>
-<figure>
-    <img src="2021-04-07_19-39.png"/> 
-</figure>
-
-<h2 id="flag-2">Flag 2</h2>
-<p>Gợi ý tiếp theo là &ldquo;bạn nên sử dụng Inspect Element trên form tạo post mới&rdquo;.</p>
-<figure>
-    <img src="2021-04-07_19-40.png"/> 
-</figure>
-
-<p>Nhìn qua mã nguồn, ta nhận thấy có một trường input ẩn với tên &ldquo;user_id&rdquo; và giá trị là &lsquo;2&rsquo;. 2 ở đây có lẽ là id của người dùng và nó sẽ được sử dụng để quyết định tác giả của bài viết. Vậy việc gì sẽ xảy ra nếu ta thử thay đổi id thành &lsquo;1&rsquo; và giả mạo admin đăng bài viết mới?</p>
-<figure>
-    <img src="2021-04-07_19-44.png"/> 
-</figure>
-
-<h2 id="flag-3">Flag 3</h2>
-<p>Gợi ý được đưa ra là &ldquo;189 * 5&rdquo; và nếu tính ra thì nó sẽ là số 945. Nhớ lại những gì ta đã tìm ra, nơi hợp lý nhất để đặt con số này có lẽ là param id giống ở trong flag 1.</p>
-<figure>
-    <img src="2021-04-07_19-46.png"/> 
-</figure>
-
-<h2 id="flag-4">Flag 4</h2>
-<p>Gọi ý của flag này là &ldquo;nếu bạn có thể edit bài viết của chính mình còn những người khác thì sao?&rdquo;.
-URL edit bài viết:</p>
-<p><code>http://35.238.245.183/b74c63f307/index.php?page=edit.php&amp;id=3</code></p>
-<p>nếu ta chuyển id thành 1</p>
-<p><code>http://35.238.245.183/b74c63f307/index.php?page=edit.php&amp;id=1</code></p>
-<p>Sẽ không có gì xảy ra khi ta mở trang mà chỉ sau khi edit post thì chúng ta mới nhận được flag</p>
-<figure>
-    <img src="2021-04-07_19-49.png"/> 
-</figure>
-
-<h2 id="flag-5">Flag 5</h2>
-<p>Gợi ý: &ldquo;Cookie cho phép bạn giữ đăng nhập, thử đăng nhập vào user với ID 1 lợi dụng điều này&rdquo;. Đã đến lúc chúng ta sử dụng công cụ thứ 2: <strong>Storage Inspector</strong>.</p>
-<figure>
-    <img src="2021-04-07_19-52.png"/> <figcaption>
-            <h4>Giá trị cookie</h4>
-        </figcaption>
-</figure>
-
-<p>Nếu bạn đã làm việc nhiều với hash thì có lẽ bạn đã nhận ra đây cơ hội cao sẽ là MD5. Sau khi crack hash trên thì chúng ta nhận được &lsquo;2&rsquo; - ID của người dùng &ldquo;user&rdquo;. Vậy nếu giả thiết của chúng ta là đúng thì việc đăng nhập vào user với ID là 1 có thể thành công bằng cách lấy hash MD5 của &lsquo;1&rsquo; và thay nó vào cookie của trang.</p>
-<figure>
-    <img src="2021-04-07_19-55.png"/> 
-</figure>
-
-<h2 id="flag-6">Flag 6</h2>
-<p>Gợi ý được cho là &ldquo;xóa bài có vẻ sẽ cần một ID mà không phải số&rdquo;. Chúng ta quay trở lại với <strong>Page Inspector</strong>, khi kiểm tra nút delete thì chúng ta có thể thấy đường dẫn sau: <code>index.php?page=delete.php&amp;id=a87ff679a2f3e71d9181a67b7542122c</code></p>
-<p>Dựa trên những kiến thức vừa rồi thì chúng ta có thể chắc chắn rằng đây sẽ là ID của post được hash bằng MD5. Thay thế bằng hash của &lsquo;1&rsquo; là <code>c4ca4238a0b923820dcc509a6f75849b</code> rồi thực hiện xóa thì chúng ta có flag 6 - flag cuối cùng.</p>
-<figure>
-    <img src="2021-04-07_21-50.png"/> 
-</figure>
-
-<p>Qua phần demo ngắn trên, ta có thể thấy rằng chỉ với Devtools, không sử dụng các phần mềm phức tạp như Sitadel, sqlmap,&hellip; là ta đã có thể hack za warudo.</p>
-<h1 id="lolong">Lolong</h1>
-]]></content>
-        </item>
-        
-        <item>
-            <title>0x01: OSINT: Nghệ thuật ShoGo</title>
-            <link>/posts/0x01-osint/</link>
-            <pubDate>Wed, 31 Mar 2021 21:30:08 +0700</pubDate>
-            
-            <guid>/posts/0x01-osint/</guid>
-            <description>Có lẽ bạn đã quá đỗi quen thuộc với cái tên Google rồi, một công cụ tìm kiếm mạnh mẽ với khả năng tìm kiếm hàng triệu kết quả với thời gian ngắn ngủi chưa đầy 1 giây. Đây cũng là lý do nhiều tin tặc ưa dùng Google cho việc OSINT (Open-Source INTelligence hay Thu thập thông tin nguồn mở). Nhưng bên cạnh công cụ tìm kiếm ai ai cũng biết thì còn có Shodan, thường được coi là Google cho các tin tặc.</description>
-            <content type="html"><![CDATA[<p>Có lẽ bạn đã quá đỗi quen thuộc với cái tên Google rồi, một công cụ tìm kiếm mạnh mẽ với khả năng tìm kiếm hàng triệu kết quả với thời gian ngắn ngủi chưa đầy 1 giây. Đây cũng là lý do nhiều tin tặc ưa dùng Google cho việc OSINT (<strong>O</strong>pen-<strong>S</strong>ource <strong>INT</strong>elligence hay Thu thập thông tin nguồn mở). Nhưng bên cạnh công cụ tìm kiếm ai ai cũng biết thì còn có Shodan, thường được coi là Google cho các tin tặc.</p>
-<h1 id="google">Google</h1>
-<p>Có lẽ bây giờ sẽ có nhiều bạn đọc tự hỏi tại sao chúng ta có thể sử dụng Google - một công cụ tìm kiếm để tấn công một mục tiêu nào đó. Câu trả lời cho việc này hết sức đơn giản: tri thức là sức mạnh. Khả năng tìm kiếm mạnh mẽ toàn internet của Google chính là lý do khiến cho nó trở thành công cụ hữu ích trong bộ đồ nghề của một tin tặc.</p>
-<p>Chỉ với Google, bạn có thể tìm hàng loạt thông tin như: file log, những lỗ hổng bảo mật trong các website, camera trực tiếp và thậm chí là chiếm quyền admin của các website với bảo mật kém. Để đạt được điều này thì những kẻ tấn công sẽ sử dụng những từ khóa tìm kiếm đặc biệt ví dụ như<code>intext:&quot;user name&quot; intext:&quot;orion core&quot; -solarwinds.com</code>để tìm những máy chủ SolarWinds Orion có lỗ hổng bảo mật. Hàng nghìn những từ khóa như vậy đều được lưu lại trên <a href="https://www.exploit-db.com/google-hacking-database">GHDB</a>.</p>
-<p>Một ví dụ đơn giản hơn là việc tìm kiếu thông tin riêng tư được lưu trên các file Google Docs:</p>
-<figure>
-    <img src="1.png"/> <figcaption>
-            <h4>Tìm kiếm danh sách học viên trên Google</h4>
-        </figcaption>
-</figure>
-
-<p>Mặc dù lượng thông tin ở đây khá ít và đã quá cũ nhưng như thế cũng đã đủ để chứng minh sức mạnh phi thường của Google.</p>
-<figure>
-    <img src="2.png"/> 
-</figure>
-
-<h1 id="shodan">Shodan</h1>
-<p>Ngoài Google ra thì Shodan cũng là một công cụ được ưa chuộng bởi giới hacker. Khác với Google, thay vì chỉ tập trung vào các website thì Shodan tập trung vào việc thu thập mọi thông tin từ mọi port trên mọi thiết bị trên mạng. Việc này tương tự với việc chạy nmap với mọi port trên mọi thiết bị trên internet vậy. Chính vì lý do này mà Shodan là cộng cụ mạnh hơn Google rất nhiều, ngoài việc tìm kiếm các website, Shodan còn có khả năng tìm các dịch vụ SSH, Telnel, SQL và thậm chí là các proxy.</p>
-<figure>
-    <img src="3.png"/> <figcaption>
-            <h4>Một số từ khóa tìm kiếm phổ biến trên Shodan</h4>
-        </figcaption>
-</figure>
-
-<p>Ngoài việc cung cấp các thông tin chi tiết, Shodan còn có thể hiển thị những lỗ hổng bảo mật của server qua việc đối chiếu số phiên bản. Bằng các tính năng tiện lợi trên thì việc Shodan được tin dùng làm công cụ tấn công cũng dễ hiểu.</p>
-<p>Để minh họa sức mạnh của Shodan, chúng ta hãy tìm kiếm và tấn công một máy chủ VPS qua VNC. Bước đầu tiên là tìm một mục tiêu không có mật khẩu cho VNC bằng query sau: <code>&quot;authentication disabled&quot; &quot;RFB 003.008&quot;</code></p>
-<figure>
-    <img src="4.png"/> <figcaption>
-            <h4>Kết quả tìm kiếm chứa hơn 6800 kết quả</h4>
-        </figcaption>
-</figure>
-
-<p>Bước tiếp theo là kết nối với một máy chủ không có mật khẩu qua VNC (ảnh lấy từ <a href="https://kernal.eu/posts/hacking-vnc-vms">kernal.eu</a>)</p>
-<figure>
-    <img src="5.png"/> 
-</figure>
-
-<p>Và chỉnh sửa boot params để lấy shell root không cần mật khẩu</p>
-<figure>
-    <img src="6.png"/> 
-</figure>
-
-<p>Và chỉ với vài bước đơn giản, chúng ta đã thành công tấm công và chiếm quyền root của một máy chủ VPS với Shodan.</p>
-<p>Cảm ơn các bạn đã dành thời gian để đọc bài viết, hãy giữ an toàn cho bản thân và những người xung quanh trên môi trường mạng.</p>
-]]></content>
-        </item>
-        
-    </channel>
+  <channel>
+    <title>Posts on Cu64</title>
+    <link>https://cu64.github.io/posts/</link>
+    <description>Recent content in Posts on Cu64</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 07 Sep 2021 00:00:00 +0700</lastBuildDate><atom:link href="https://cu64.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Junior Hacking Talent - Buffer Overflow Writeup</title>
+      <link>https://cu64.github.io/posts/jht-bof/</link>
+      <pubDate>Tue, 07 Sep 2021 00:00:00 +0700</pubDate>
+      
+      <guid>https://cu64.github.io/posts/jht-bof/</guid>
+      <description>As always, we will be starting out with taking a peek at the source code. More specifically, the main function.
+int main() { setbuf(stdout, 0); char password[20]; char isAdmin = &amp;#39;0&amp;#39;; int loginAsUser; banner(); printf(&amp;#34;Đăng nhập với user:\n1. Nhập 1 là Admin\n2. Nhập 2 là Guest\n&amp;#34;); scanf(&amp;#34;%d%*c&amp;#34;,&amp;amp;loginAsUser); if(loginAsUser == 2) guest_account(); else if(loginAsUser == 1) { admin_account(); printf(&amp;#34;Nhập password:\n&amp;#34;); gets(password); // Hella sús ngl  if(!strncmp(password,admin_password,20)) isAdmin = &amp;#39;1&amp;#39;; else wrong_password(); } if(isAdmin == &amp;#39;1&amp;#39;) print_flag(); return 0; } What jumped at me is the gets() function used when reading the password.</description>
+    </item>
+    
+    <item>
+      <title>Pi Network&#39;s heel of Achilles</title>
+      <link>https://cu64.github.io/posts/pi-network/</link>
+      <pubDate>Mon, 17 May 2021 00:00:00 +0700</pubDate>
+      
+      <guid>https://cu64.github.io/posts/pi-network/</guid>
+      <description>After hearing the news from Ryan on Twitter about Pi Network, it seemed like he worked with the iOS version of the app and it was only a announcement and isn&amp;rsquo;t really detailed so we decided to do our own analysis on the latest Android version of the Pi Network app (version 1.30.3).
+While doing our own thorough investigation, we encountered many difficulties such as SSL Pinning preventing us from just strait up sliding in Burp Suite and reading the data so the steps taken to address this are the followings.</description>
+    </item>
+    
+    <item>
+      <title>Public Amazon S3 Buckets and the risk of data leakage</title>
+      <link>https://cu64.github.io/posts/public-aws-s3-buckets/</link>
+      <pubDate>Thu, 18 Feb 2021 00:00:00 +0700</pubDate>
+      
+      <guid>https://cu64.github.io/posts/public-aws-s3-buckets/</guid>
+      <description>We&amp;rsquo;ve seen the recent CityBee leak from Lithuania (the report is on this site). The main cause of this strategy is a misconfiguration of the Azure Blob Storage, allowing public unauthenticated access leading to the leakage of over 110,000 users&#39; information.
+So I was thinking, what if we could replicate this with Amazon S3 Buckets? And heck yeah it worked.
+So just like the steps shown on Behind the scenes of CityBee customer data leak I will generate a list of domain names that belong to Amazon S3 Buckets.</description>
+    </item>
+    
+  </channel>
 </rss>

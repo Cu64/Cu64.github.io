@@ -1,257 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="author" content="">
-<meta name="description" content="We&amp;rsquo;ve seen the recent CityBee leak from Lithuania (the report is on https://kernal.eu/). The main cause of this strategy is a misconfiguration of the Azure Blob Storage, allowing public unauthenticated access leading to the leakage of over 110,000 users&#39; information.
-So I was thinking, what if we could replicate this with Amazon S3 Buckets? And heck yeah it worked.
-So just like the steps shown on https://kernal.eu/posts/citybee-leak/ I will generate a list of domain names that belong to Amazon S3 Buckets." />
-<meta name="keywords" content=", security" />
-<meta name="robots" content="noodp" />
-<meta name="theme-color" content="" />
-<link rel="canonical" href="/posts/public-aws-s3-buckets/" />
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Public Amazon S3 Buckets and the risk of data leakage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/themes.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <meta name="description" content="">
+    <meta name="generator" content="Hugo 0.80.0" />
+</head>
 
-
-    <title>
-        
-            Public Amazon S3 Buckets and the risk of data leakage :: Cu64 
-        
-    </title>
-
-
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" rel="stylesheet"
-    type="text/css">
-
-
-
-<link rel="stylesheet" href="/main.d7bdd8ee18bfbf4c605488a7e5b1b92cd980dfeed2bdaeab4dd5e931a7a78bc0.css">
-
-
-
-
-
-
-<meta itemprop="name" content="Public Amazon S3 Buckets and the risk of data leakage">
-<meta itemprop="description" content="We&rsquo;ve seen the recent CityBee leak from Lithuania (the report is on https://kernal.eu/). The main cause of this strategy is a misconfiguration of the Azure Blob Storage, allowing public unauthenticated access leading to the leakage of over 110,000 users&#39; information.
-So I was thinking, what if we could replicate this with Amazon S3 Buckets? And heck yeah it worked.
-So just like the steps shown on https://kernal.eu/posts/citybee-leak/ I will generate a list of domain names that belong to Amazon S3 Buckets.">
-<meta itemprop="datePublished" content="2021-02-17T23:55:46+07:00" />
-<meta itemprop="dateModified" content="2021-02-17T23:55:46+07:00" />
-<meta itemprop="wordCount" content="410">
-<meta itemprop="image" content="/"/>
-
-
-
-<meta itemprop="keywords" content="security," />
-
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="/"/>
-
-<meta name="twitter:title" content="Public Amazon S3 Buckets and the risk of data leakage"/>
-<meta name="twitter:description" content="We&rsquo;ve seen the recent CityBee leak from Lithuania (the report is on https://kernal.eu/). The main cause of this strategy is a misconfiguration of the Azure Blob Storage, allowing public unauthenticated access leading to the leakage of over 110,000 users&#39; information.
-So I was thinking, what if we could replicate this with Amazon S3 Buckets? And heck yeah it worked.
-So just like the steps shown on https://kernal.eu/posts/citybee-leak/ I will generate a list of domain names that belong to Amazon S3 Buckets."/>
-
-
-
-
-    <meta property="og:title" content="Public Amazon S3 Buckets and the risk of data leakage" />
-<meta property="og:description" content="We&rsquo;ve seen the recent CityBee leak from Lithuania (the report is on https://kernal.eu/). The main cause of this strategy is a misconfiguration of the Azure Blob Storage, allowing public unauthenticated access leading to the leakage of over 110,000 users&#39; information.
-So I was thinking, what if we could replicate this with Amazon S3 Buckets? And heck yeah it worked.
-So just like the steps shown on https://kernal.eu/posts/citybee-leak/ I will generate a list of domain names that belong to Amazon S3 Buckets." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="/posts/public-aws-s3-buckets/" />
-<meta property="og:image" content="/"/>
-<meta property="article:published_time" content="2021-02-17T23:55:46+07:00" />
-<meta property="article:modified_time" content="2021-02-17T23:55:46+07:00" /><meta property="og:site_name" content="Cu64" />
-
-
-
-
-
-
-    <meta property="article:published_time" content="2021-02-17 23:55:46 &#43;0700 &#43;07" />
-
-
-
-
-
-
-
-
-    </head>
-
-    
-        <body>
-    
-    
-        <div class="container">
-            <header class="header">
-    <span class="header__inner">
-        <a href="/" style="text-decoration: none;">
-    <div class="logo">
-        
-            <span class="logo__mark">></span>
-            <span class="logo__text">Cu64</span>
-            <span class="logo__cursor" style=
-                  "
-                   
-                   ">
-            </span>
-        
+<body>
+    <div class="container">
+        <div class="header">
+    <div class="nav">
+        <a class="home" href="https://cu64.github.io/">Cu64</a>
+        <a href="/about/">about</a>
+        <a onclick="switchTheme()">theme</a>
     </div>
-</a>
+</div>
 
-
-        <span class="header__right">
-            
-                <nav class="menu">
-    <ul class="menu__inner"><li><a href="/about">About</a></li><li><a href="/posts">Posts</a></li>
-    </ul>
-</nav>
-
-                <span class="menu-trigger">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-                    </svg>
-                </span>
-            
-        </span>
-    </span>
-</header>
-
-
-            <div class="content">
-                
-  <main class="post">
-
-    <div class="post-info">
-      <p>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
-          <circle cx="12" cy="12" r="10"></circle>
-          <polyline points="12 6 12 12 16 14"></polyline>
-        </svg>
-        2 minutes
-
-        
-      </p>
-    </div>
-
-    <article>
-      <h1 class="post-title">
-        <a href="/posts/public-aws-s3-buckets/">Public Amazon S3 Buckets and the risk of data leakage</a>
-      </h1>
-
-      
-
-      
-
-      <div class="post-content">
-        <p>We&rsquo;ve seen the recent CityBee leak from Lithuania (the report is on <a href="https://kernal.eu/)">https://kernal.eu/)</a>. The main cause of this strategy is a misconfiguration of the Azure Blob Storage, allowing public unauthenticated access leading to the leakage of over 110,000 users' information.</p>
+        <div class="content">
+<h1>Public Amazon S3 Buckets and the risk of data leakage</h1>
+<p>We&rsquo;ve seen the recent CityBee leak from Lithuania (the report is on this site). The main cause of this strategy is a misconfiguration of the Azure Blob Storage, allowing public unauthenticated access leading to the leakage of over 110,000 users' information.</p>
 <p>So I was thinking, what if we could replicate this with Amazon S3 Buckets? And heck yeah it worked.</p>
-<p>So just like the steps shown on <a href="https://kernal.eu/posts/citybee-leak/">https://kernal.eu/posts/citybee-leak/</a> I will generate a list of domain names that belong to Amazon S3 Buckets.</p>
+<p>So just like the steps shown on <a href="/posts/citybee-leak/">Behind the scenes of CityBee customer data leak</a> I will generate a list of domain names that belong to Amazon S3 Buckets.</p>
 <h2 id="1-download-the-cname-database-from-rapid7-open-data-fdns">1. Download the CNAME database from Rapid7 Open Data FDNS</h2>
-<pre><code>wget https://opendata.rapid7.com/sonar.fdns_v2/2021-01-29-1611878713-fdns_cname.json.gz
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">wget https://opendata.rapid7.com/sonar.fdns_v2/2021-01-29-1611878713-fdns_cname.json.gz
 gunzip 2021-01-29-1611878713-fdns_cname.json.gz
-</code></pre><h2 id="2-cleaning-up-the-data">2. Cleaning up the data</h2>
-<pre><code>jq -r '.value' 2021-01-29-1611878713-fdns_cname.json &gt; cname.txt
+</code></pre></div><h2 id="2-cleaning-up-the-data">2. Cleaning up the data</h2>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">jq -r <span class="s1">&#39;.value&#39;</span> 2021-01-29-1611878713-fdns_cname.json &gt; cname.txt
 sort -u cname.txt -o cname.txt
-grep '\.s3\.' cname.txt &gt; aws.txt
-</code></pre><p>At this point we should have a list of domain names that belong to AWS S3 Buckets.</p>
+grep <span class="s1">&#39;\.s3\.&#39;</span> cname.txt &gt; aws.txt
+</code></pre></div><p>At this point we should have a list of domain names that belong to AWS S3 Buckets.</p>
 <h2 id="3-verifying-that-you-can-access-the-data">3. Verifying that you can access the data.</h2>
 <p>Now unlike the case with Azure Blob Storage, there&rsquo;s no need to brute force the directory or append GET parameters. At this point it&rsquo;s just checking if the domain still exists and allow access or not. I will accomplish this with the help of Project Discovery&rsquo;s <a href="https://github.com/projectdiscovery/httpx">httpx</a></p>
-<pre><code>httpx -l aws.txt -mc 200 -no-color -o aws_result.txt
-</code></pre><h2 id="4-listing-files-in-the-aws-s3-buckets">4. Listing files in the AWS S3 Buckets</h2>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">httpx -l aws.txt -mc <span class="m">200</span> -no-color -o aws_result.txt
+</code></pre></div><h2 id="4-listing-files-in-the-aws-s3-buckets">4. Listing files in the AWS S3 Buckets</h2>
 <p>To do this I went for the lazy route and asked the POSIX wizard - Stnby to create a script that&rsquo;d do it for me and this is what he came up with</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># get_aws_keys.sh</span>
-curl -s <span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span> | yq-xq -r <span style="color:#e6db74">&#39;.ListBucketResult.Contents[].Key&#39;</span> | xargs -L <span style="color:#ae81ff">1</span> printf <span style="color:#e6db74">&#39;%s/%s\n&#39;</span> <span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># get_aws_keys.sh</span>
+curl -s <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span> <span class="p">|</span> yq-xq -r <span class="s1">&#39;.ListBucketResult.Contents[].Key&#39;</span> <span class="p">|</span> xargs -L <span class="m">1</span> <span class="nb">printf</span> <span class="s1">&#39;%s/%s\n&#39;</span> <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
 </code></pre></div><p>This script will list all the files from the supplied AWS S3 Bucket URL. And to use this with our list, we simply need to run:</p>
-<pre><code>cat aws_result.txt | xargs -L 1 ./get_aws_keys.sh &gt; files.txt
-</code></pre><p>The resulting txt file will contain all of the public accessible files from all of the AWS S3 Buckets. At the time of writing this post, I managed to generate a list of over 170,000 files. Just think about it, all of this data is publicly available, now image the amount of damage that this could&rsquo;ve cause if someone decided that it&rsquo;ll be a great idea to put sensitive data on there or even worse, a database?</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">cat aws_result.txt <span class="p">|</span> xargs -L <span class="m">1</span> ./get_aws_keys.sh &gt; files.txt
+</code></pre></div><p>The resulting txt file will contain all of the public accessible files from all of the AWS S3 Buckets. At the time of writing this post, I managed to generate a list of over 170,000 files. Just think about it, all of this data is publicly available, now image the amount of damage that this could&rsquo;ve cause if someone decided that it&rsquo;ll be a great idea to put sensitive data on there or even worse, a database?</p>
 <h2 id="5-remediation">5. Remediation</h2>
 <p>Block access to private informations or don&rsquo;t store them on these storage services in the first place if it&rsquo;s not necessary.</p>
 <p>Well, that&rsquo;s all I&rsquo;ve got for you today, and we&rsquo;ll meet again in the next post. Stay safe and wear a mask.</p>
 
-      </div>
-    </article>
-
-    <hr />
-
-    <div class="post-info">
-      
-    <p>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
-
-        <span class="tag"><a href="/tags/security/">security</a></span>
-        
-    </p>
-
-      
-
-      <p>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-          <polyline points="14 2 14 8 20 8"></polyline>
-          <line x1="16" y1="13" x2="8" y2="13"></line>
-          <line x1="16" y1="17" x2="8" y2="17"></line>
-          <polyline points="10 9 9 9 8 9"></polyline>
-        </svg>
-        410 Words
-      </p>
-
-      <p>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
-        </svg>
-        
-          2021-02-17
-        
-
-         
-          
-        
-      </p>
+</div>
     </div>
+    <script src="/js/theme-switcher.js"></script>
 
-    
-
-
-    
-
-    
-
-  </main>
-
-            </div>
-
-            
-                <footer class="footer">
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span>&copy; 2021</span>
-            
-            <span>Cu64</span><span><a href="/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
-        </div>
-    </div>
-</footer>
-
-            
-        </div>
-
-        
-
-
-
-<script type="text/javascript" src="/bundle.min.f8557eb670466aea7eb983f6a8375609ad7dba5617c969fdfdf8cb4dbf82c1e47c35c2ca3b26098578653cadac3390ddaa64ccdf5791e295d64bef255c68a96b.js" integrity="sha512-&#43;FV&#43;tnBGaup&#43;uYP2qDdWCa19ulYXyWn9/fjLTb&#43;CweR8NcLKOyYJhXhlPK2sM5DdqmTM31eR4pXWS&#43;8lXGipaw=="></script>
-
-
-
-    </body>
+</body>
 </html>

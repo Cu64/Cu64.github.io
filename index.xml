@@ -2,50 +2,51 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Cu64</title>
-    <link>/</link>
+    <link>https://cu64.github.io/</link>
     <description>Recent content on Cu64</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <copyright>Cu64</copyright>
-    <lastBuildDate>Mon, 19 Apr 2021 23:52:41 +0700</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <lastBuildDate>Tue, 07 Sep 2021 00:00:00 +0700</lastBuildDate><atom:link href="https://cu64.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>0x03: Tấn công các thiết bị Android với ADB</title>
-      <link>/posts/0x03-adbattack/</link>
-      <pubDate>Mon, 19 Apr 2021 23:52:41 +0700</pubDate>
+      <title>Junior Hacking Talent - Buffer Overflow Writeup</title>
+      <link>https://cu64.github.io/posts/jht-bof/</link>
+      <pubDate>Tue, 07 Sep 2021 00:00:00 +0700</pubDate>
       
-      <guid>/posts/0x03-adbattack/</guid>
-      <description>Theo thông tin từ trang chủ developer.android.com ADB hay Android Debug là một công cụ chạy dưới dạng dòng lệnh, cho phép người dùng quản lý tác vụ, chẳng hạn như cài đặt và gỡ lỗi ứng dụng, đồng thời nó cung cấp quyền truy cập vào hệ điều hành trên thiết bị Android.
-ADB bao gồm 3 thành phần chính:
- Client, dùng để gửi các câu lệnh Daemon (adbd), dịch vụ ADB chạy ngầm trên các thiết bị Server, quản lý giao tiếp giữa Client và Daemon  Thông thường, các nhà phát triển kết nối với dịch vụ ADB được cài đặt trên Android bằng cáp USB, nhưng cũng có thể sử dụng ADB không dây bằng cách bật máy chủ daemon tại cổng TCP 5555 trên thiết bị.</description>
+      <guid>https://cu64.github.io/posts/jht-bof/</guid>
+      <description>As always, we will be starting out with taking a peek at the source code. More specifically, the main function.
+int main() { setbuf(stdout, 0); char password[20]; char isAdmin = &amp;#39;0&amp;#39;; int loginAsUser; banner(); printf(&amp;#34;Đăng nhập với user:\n1. Nhập 1 là Admin\n2. Nhập 2 là Guest\n&amp;#34;); scanf(&amp;#34;%d%*c&amp;#34;,&amp;amp;loginAsUser); if(loginAsUser == 2) guest_account(); else if(loginAsUser == 1) { admin_account(); printf(&amp;#34;Nhập password:\n&amp;#34;); gets(password); // Hella sús ngl  if(!strncmp(password,admin_password,20)) isAdmin = &amp;#39;1&amp;#39;; else wrong_password(); } if(isAdmin == &amp;#39;1&amp;#39;) print_flag(); return 0; } What jumped at me is the gets() function used when reading the password.</description>
     </item>
     
     <item>
-      <title>0x02: Pentest bằng Devtools</title>
-      <link>/posts/0x02-webdevpentesttools/</link>
-      <pubDate>Sun, 04 Apr 2021 12:24:32 +0700</pubDate>
+      <title>Pi Network&#39;s heel of Achilles</title>
+      <link>https://cu64.github.io/posts/pi-network/</link>
+      <pubDate>Mon, 17 May 2021 00:00:00 +0700</pubDate>
       
-      <guid>/posts/0x02-webdevpentesttools/</guid>
-      <description>Có lẽ nhiều người khi nghe đến cụm từ hacker sẽ nghĩ ngay đến những người mặc hoodie trong phòng tối với dòng lệnh nền đen chữ xanh cùng một số lớn công cụ phức tạp (sqlmap, Sitadel, hacktool,..). Nhưng sự thực nó khác xa với mong đợi nhiều, và trong bài hôm nay, tôi sẽ chứng tỏ điều đó bằng cách tấn công một website chỉ với Website Developer Tools của trình duyệt Firefox và không gì khác.</description>
+      <guid>https://cu64.github.io/posts/pi-network/</guid>
+      <description>After hearing the news from Ryan on Twitter about Pi Network, it seemed like he worked with the iOS version of the app and it was only a announcement and isn&amp;rsquo;t really detailed so we decided to do our own analysis on the latest Android version of the Pi Network app (version 1.30.3).
+While doing our own thorough investigation, we encountered many difficulties such as SSL Pinning preventing us from just strait up sliding in Burp Suite and reading the data so the steps taken to address this are the followings.</description>
     </item>
     
     <item>
-      <title>0x01: OSINT: Nghệ thuật ShoGo</title>
-      <link>/posts/0x01-osint/</link>
-      <pubDate>Wed, 31 Mar 2021 21:30:08 +0700</pubDate>
+      <title>Public Amazon S3 Buckets and the risk of data leakage</title>
+      <link>https://cu64.github.io/posts/public-aws-s3-buckets/</link>
+      <pubDate>Thu, 18 Feb 2021 00:00:00 +0700</pubDate>
       
-      <guid>/posts/0x01-osint/</guid>
-      <description>Có lẽ bạn đã quá đỗi quen thuộc với cái tên Google rồi, một công cụ tìm kiếm mạnh mẽ với khả năng tìm kiếm hàng triệu kết quả với thời gian ngắn ngủi chưa đầy 1 giây. Đây cũng là lý do nhiều tin tặc ưa dùng Google cho việc OSINT (Open-Source INTelligence hay Thu thập thông tin nguồn mở). Nhưng bên cạnh công cụ tìm kiếm ai ai cũng biết thì còn có Shodan, thường được coi là Google cho các tin tặc.</description>
+      <guid>https://cu64.github.io/posts/public-aws-s3-buckets/</guid>
+      <description>We&amp;rsquo;ve seen the recent CityBee leak from Lithuania (the report is on this site). The main cause of this strategy is a misconfiguration of the Azure Blob Storage, allowing public unauthenticated access leading to the leakage of over 110,000 users&#39; information.
+So I was thinking, what if we could replicate this with Amazon S3 Buckets? And heck yeah it worked.
+So just like the steps shown on Behind the scenes of CityBee customer data leak I will generate a list of domain names that belong to Amazon S3 Buckets.</description>
     </item>
     
     <item>
       <title>About</title>
-      <link>/about/</link>
-      <pubDate>Wed, 17 Feb 2021 23:42:58 +0700</pubDate>
+      <link>https://cu64.github.io/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/about/</guid>
-      <description>Hi, I&amp;rsquo;m Duong Tieu Dong (aka Cu64), a young security researcher from Vietnam who is currently studying at Phan Dinh Phung High School.
-I&amp;rsquo;m interested in web and mobile application penetration testing.
-This is my personal blog, the place where I&amp;rsquo;ll post on security, programming and other subjects. A copy of all the posts will also be available on kernal.eu
+      <guid>https://cu64.github.io/about/</guid>
+      <description>Hi, I’m Duong Tieu Dong (aka Cu64), a young security researcher from Vietnam who is currently studying at Phan Dinh Phung High School.
+I’m interested in web and mobile application penetration testing.
+This is my personal blog, the place where I’ll post on security, programming and other subjects. A copy of some of the posts may be found on kernal.eu
 You can reach me via email at cu64@kernal.eu</description>
     </item>
     
