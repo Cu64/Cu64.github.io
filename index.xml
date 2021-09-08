@@ -6,7 +6,28 @@
     <description>Recent content on Cu64</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 08 Sep 2021 00:00:00 +0700</lastBuildDate><atom:link href="https://cu64.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 08 Sep 2021 00:00:01 +0700</lastBuildDate><atom:link href="https://cu64.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Junior Hacking Talent - Quay Ngược Thời Gian Writeup</title>
+      <link>https://cu64.github.io/posts/jht-quay-nguoc-thoi-gian/</link>
+      <pubDate>Wed, 08 Sep 2021 00:00:01 +0700</pubDate>
+      
+      <guid>https://cu64.github.io/posts/jht-quay-nguoc-thoi-gian/</guid>
+      <description>We&amp;rsquo;ll start off by dumping all the strings contained in the memory dump with strings
+❯ strings mem.mem &amp;gt; memstr.txt As the CTF hinted that there was SSH connection established with the use of a private key, we can look for those with grep and the fact that these keys usually starts with BEGIN OPENSSH PRIVATE KEY.
+❯ grep &amp;#34;OPENSSH PRIVATE KEY&amp;#34; memstr.txt -A 40 Looking at the result, there are plenty of matches for the start of the keys but most of them are missing the end which is END OPENSSH PRIVATE KEY.</description>
+    </item>
+    
+    <item>
+      <title>Junior Hacking Talent - Kid Protocol Writeup</title>
+      <link>https://cu64.github.io/posts/jht-kid-protocol/</link>
+      <pubDate>Wed, 08 Sep 2021 00:00:00 +0700</pubDate>
+      
+      <guid>https://cu64.github.io/posts/jht-kid-protocol/</guid>
+      <description>Looking at the source code, we can see the basic processing of each packet
+class KidPacket: def __init__(self, rawPacket): self.parse(rawPacket) def parse(self, rawPacket): self.contentLength = struct.unpack(&amp;#34;&amp;lt;H&amp;#34;, rawPacket[0:2])[0] data = rawPacket[2:] if self.contentLength != len(data): raise Exception(&amp;#34;Bad content-length&amp;#34;) try: self.body = json.loads(data) except: raise Exception(&amp;#34;Bad format&amp;#34;) def getValue(object, key): try: return object[key] except KeyError: raise Exception(&amp;#34;Missing &amp;#39;%s&amp;#39; param&amp;#34; % key) kidPacket = KidPacket(rawPacket) action = getValue(kidPacket.body, &amp;#34;action&amp;#34;) inputFile = getValue(kidPacket.body, &amp;#34;file&amp;#34;) From this, we can figure out the format for each packet: they all starts with 2 bytes containing the length of the data packed as an unsigned short in little-endian format (&amp;lt;H).</description>
+    </item>
+    
     <item>
       <title>Junior Hacking Talent - Mã Máy Writeup</title>
       <link>https://cu64.github.io/posts/jht-ma-may/</link>

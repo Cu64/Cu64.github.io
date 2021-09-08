@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Junior Hacking Talent - Kid Protocol Writeup</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/themes.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <meta name="description" content="">
+    <meta name="generator" content="Hugo 0.80.0" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+    <div class="nav">
+        <a class="home" href="https://cu64.github.io/">Cu64</a>
+        <a href="/about/">about</a>
+        <a onclick="switchTheme()">theme</a>
+    </div>
+</div>
+
+        <div class="content">
+<h1>Junior Hacking Talent - Kid Protocol Writeup</h1>
+<p>Looking at the source code, we can see the basic processing of each packet</p>
+<div class="highlight"><pre class="chroma"><code class="language-py" data-lang="py"><span class="k">class</span> <span class="nc">KidPacket</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rawPacket</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rawPacket</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rawPacket</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contentLength</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&#34;&lt;H&#34;</span><span class="p">,</span> <span class="n">rawPacket</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">rawPacket</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">contentLength</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&#34;Bad content-length&#34;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&#34;Bad format&#34;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">getValue</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">object</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&#34;Missing &#39;</span><span class="si">%s</span><span class="s2">&#39; param&#34;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
+
+
+<span class="n">kidPacket</span> <span class="o">=</span> <span class="n">KidPacket</span><span class="p">(</span><span class="n">rawPacket</span><span class="p">)</span>
+<span class="n">action</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">(</span><span class="n">kidPacket</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="s2">&#34;action&#34;</span><span class="p">)</span>
+<span class="n">inputFile</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">(</span><span class="n">kidPacket</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="s2">&#34;file&#34;</span><span class="p">)</span>
+</code></pre></div><p>From this, we can figure out the format for each packet: they all starts with 2
+bytes containing the length of the data packed as an unsigned short in
+little-endian format (<code>&lt;H</code>). The rest of the packet is just JSON data which is
+decoded and it&rsquo;s <code>action</code> and <code>file</code> key is read.</p>
+<p>The function below decides whether we get to read the flag or not according to
+the JSON data inside the packet body.</p>
+<div class="highlight"><pre class="chroma"><code class="language-py" data-lang="py"><span class="n">fileList</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;intro.txt&#34;</span><span class="p">,</span> <span class="s2">&#34;flag.txt&#34;</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rawPacket</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">kidPacket</span> <span class="o">=</span> <span class="n">KidPacket</span><span class="p">(</span><span class="n">rawPacket</span><span class="p">)</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">(</span><span class="n">kidPacket</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="s2">&#34;action&#34;</span><span class="p">)</span>
+            <span class="n">inputFile</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">(</span><span class="n">kidPacket</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="s2">&#34;file&#34;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&#34;read&#34;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">inputFile</span> <span class="ow">in</span> <span class="n">fileList</span><span class="p">:</span>
+                    <span class="nb">file</span> <span class="o">=</span> <span class="n">inputFile</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">file</span> <span class="o">=</span> <span class="s2">&#34;intro.txt&#34;</span>
+
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="s2">&#34;r&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="s2">&#34;Wrong action&#34;</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</code></pre></div><p>Therefore, what we should have inside the body in JSON is:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span><span class="nt">&#34;action&#34;</span><span class="p">:</span><span class="s2">&#34;read&#34;</span><span class="p">,</span> <span class="nt">&#34;file&#34;</span><span class="p">:</span><span class="s2">&#34;flag.txt&#34;</span><span class="p">}</span>
+</code></pre></div><p>Once we have both the data and the format of the packet, creating and sending
+one should be trivial.</p>
+<div class="highlight"><pre class="chroma"><code class="language-py" data-lang="py"><span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">SOCK_DGRAM</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="s2">&#34;167.71.204.85&#34;</span><span class="p">,</span> <span class="mi">3108</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">body</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">body</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">content_length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&#34;&lt;H&#34;</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">content_length</span> <span class="o">+</span> <span class="n">data</span>
+
+<span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&#34;action&#34;</span><span class="p">:</span> <span class="s2">&#34;read&#34;</span><span class="p">,</span> <span class="s2">&#34;file&#34;</span><span class="p">:</span> <span class="s2">&#34;flag.txt&#34;</span><span class="p">}</span>
+<span class="n">packet</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">recvfrom</span><span class="p">(</span><span class="mi">4096</span><span class="p">))</span>
+</code></pre></div><p>This script should, in theory, send an UDP packet to the server that will give
+us the flag.</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">❯ python solve.py
+<span class="o">(</span>b<span class="s1">&#39; _______          __                       __   .__                \n \\
+</span><span class="s1">\\   _____/  |___  _  _____________|  | _|__| ____    ____  \n /   |   \\_/ __ \
+</span><span class="s1">\   __\\ \\/ \\/ /  _ \\_  __ \\  |/ /  |/    \\  / ___\\ \n/    |    \\  ___/|
+</span><span class="s1">|  \\     (  &lt;_&gt; )  | \\/    &lt;|  |   |  \\/ /_/  &gt;\n\\____|__  /\\___  &gt;__|   \\
+</span><span class="s1">/\\_/ \\____/|__|  |__|_ \\__|___|  /\\___  / \n        \\/     \\/
+</span><span class="s1">\\/       \\//_____/  \n           ___________.__
+</span><span class="s1">\n           \\_   _____/|  | _____     ____                          \n
+</span><span class="s1">|    __)  |  | \\__  \\   / ___\\                         \n            |     \\
+</span><span class="s1">|  |__/ __ \\_/ /_/  &gt;                        \n            \\___  /   |____(___
+</span><span class="s1">_  /\\___  /                         \n                \\/              \\//____
+</span><span class="s1">_/                          \n
+</span><span class="s1">\n\nCTF{master_networking_fcbfce971dae5a7271deb6ffbc972b16}\n&#39;</span>, <span class="o">(</span><span class="s1">&#39;167.71.204.85&#39;</span>
+, 3108<span class="o">))</span>
+</code></pre></div>
+</div>
+    </div>
+    <script src="/js/theme-switcher.js"></script>
+
+</body>
+</html>

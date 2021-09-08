@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Junior Hacking Talent - Quay Ngược Thời Gian Writeup</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/themes.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <meta name="description" content="">
+    <meta name="generator" content="Hugo 0.80.0" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+    <div class="nav">
+        <a class="home" href="https://cu64.github.io/">Cu64</a>
+        <a href="/about/">about</a>
+        <a onclick="switchTheme()">theme</a>
+    </div>
+</div>
+
+        <div class="content">
+<h1>Junior Hacking Talent - Quay Ngược Thời Gian Writeup</h1>
+<p>We&rsquo;ll start off by dumping all the strings contained in the memory dump with
+<code>strings</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">❯ strings mem.mem &gt; memstr.txt
+</code></pre></div><p>As the CTF hinted that there was SSH connection established with the use of a
+private key, we can look for those with <code>grep</code> and the fact that these keys
+usually starts with <code>BEGIN OPENSSH PRIVATE KEY</code>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">❯ grep <span class="s2">&#34;OPENSSH PRIVATE KEY&#34;</span> memstr.txt -A <span class="m">40</span>
+</code></pre></div><p>Looking at the result, there are plenty of matches for the start of the keys but
+most of them are missing the end which is <code>END OPENSSH PRIVATE KEY</code>. The ones
+which contains both of these are complete and seems to be repetition of the same
+key. We&rsquo;ll be saving it into a file named <code>id_rsa</code>.</p>
+<p>Also, make sure that the key has proper permission for it to work</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">❯ chmod <span class="m">600</span> id_rsa
+</code></pre></div><p>Next up is searching for the ssh command inside the memory dump to use this key
+with</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">❯ grep <span class="s2">&#34;ssh &#34;</span> memstr.txt
+ssh -C -l %u %h <span class="nb">exec</span> /usr/sbin/imapd
+ possible to restrict the ssh key to <span class="s2">&#34;borg serve&#34;</span> using the
+<span class="o">[</span>00m$ ssh trung1423
+ssh trung1423
+ssh trung149@188.166.233.168 -p <span class="m">18888</span>
+<span class="o">[</span>00m$ ssh trung1423
+ssh trung1423
+vm@ubuntu:~$ ssh trung149@188.166.233.168 -p <span class="m">18888</span>
+ssh in a
+ssh -C -l %u %h <span class="nb">exec</span> /usr/sbin/imapd
+</code></pre></div><p>We now have both the key and the ssh user, IP and port to establish the SSH
+connection.</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">❯ ssh trung149@188.166.233.168 -p <span class="m">18888</span> -i id_rsa
+Welcome to Ubuntu 20.04.2 LTS <span class="o">(</span>GNU/Linux 5.4.0-73-generic x86_64<span class="o">)</span>
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+This system has been minimized by removing packages and content that are
+not required on a system that users <span class="k">do</span> not log into.
+
+To restore this content, you can run the <span class="s1">&#39;unminimize&#39;</span> command.
+Last login: Tue Sep  <span class="m">7</span> 16:51:46 <span class="m">2021</span> from x.x.x.x
+----------------------------------------------------
+<span class="p">|</span>This is your prize                                <span class="p">|</span>
+<span class="p">|</span>CTF<span class="o">{</span>use_key_to_login_is_more_secur3_than_password<span class="o">}</span><span class="p">|</span>
+----------------------------------------------------
+Connection to 188.166.233.168 closed.
+</code></pre></div>
+</div>
+    </div>
+    <script src="/js/theme-switcher.js"></script>
+
+</body>
+</html>
