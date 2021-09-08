@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Junior Hacking Talent - Mã Máy Writeup</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/themes.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <meta name="description" content="">
+    <meta name="generator" content="Hugo 0.80.0" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+    <div class="nav">
+        <a class="home" href="https://cu64.github.io/">Cu64</a>
+        <a href="/about/">about</a>
+        <a onclick="switchTheme()">theme</a>
+    </div>
+</div>
+
+        <div class="content">
+<h1>Junior Hacking Talent - Mã Máy Writeup</h1>
+<pre><code>❯ nc 188.166.233.168 4790
+ -------------------------------------------------
+|   080487b4 &lt;print_flag&gt;:                        |
+|   080487b4:   55                push   ebp      |
+|   080487b5:   89 e5             mov    ebp,esp  |
+|   080487b7:   53                push   ebx      |
+|   ....                                          |
+ -------------------------------------------------
+</code></pre><p>Looking at the Assembly, we notice that <strong>print_flag()</strong> resides at the address
+<code>0x080487b4</code>, this is what we need to execute.</p>
+<p>There are multiple ways to jump to that function but what I&rsquo;ll be using is
+<code>push</code>+<code>ret</code>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-asm" data-lang="asm"><span class="nf">push</span>        <span class="mi">0x080487b4</span>
+<span class="nf">ret</span>
+</code></pre></div><p>Essentially, the push instruction will put <code>0x080487b4</code> at the top of the stack,
+which will later be popped off by <code>ret</code> and placed into EIP.</p>
+<p>With the help of the handy <a href="https://c9x.me/x86/">x86 Instruction Set Reference</a>,
+we can easily figure out the opcodes for <code>push</code> and <code>ret</code> which is <code>68</code> and <code>C2</code>
+correspondingly.</p>
+<p>Before blindly pushing this address into memory, we need to consider something
+called endianess. As we&rsquo;re executing this on the 80386, which uses the
+little-endian format, we would have to convert <code>0x080487b4</code> from big-endian to
+little-endian which is <code>0xb4870408</code>.</p>
+<p>All that&rsquo;s left is to combine everything and send it to the CTF server:</p>
+<div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">❯ <span class="nb">echo</span> <span class="s2">&#34;68B4870408C2&#34;</span> <span class="p">|</span> nc 188.166.233.168 <span class="m">4790</span>
+ -------------------------------------------------
+<span class="p">|</span>   080487b4 &lt;print_flag&gt;:                        <span class="p">|</span>
+<span class="p">|</span>   080487b4:	<span class="m">55</span>             push   ebp      <span class="p">|</span>
+<span class="p">|</span>   080487b5:	<span class="m">89</span> e5          mov    ebp,esp  <span class="p">|</span>
+<span class="p">|</span>   080487b7:	<span class="m">53</span>             push   ebx      <span class="p">|</span>
+<span class="p">|</span>   ....                                          <span class="p">|</span>
+ -------------------------------------------------
+
+Hãy nhập đoạn mã máy mà em muốn:
+
+Disassembly:
+
+<span class="m">68</span> b4 <span class="m">87</span> <span class="m">04</span> <span class="m">08</span>             push  0x80487b4
+
+Chúc mừng em đã viết mã máy thực thi hàm print_flag<span class="o">()</span> thành công!
+Đây là phần thưởng dành cho em CTF<span class="o">{</span>computers_only_understand_machine_code<span class="o">}</span>
+</code></pre></div>
+</div>
+    </div>
+    <script src="/js/theme-switcher.js"></script>
+
+</body>
+</html>

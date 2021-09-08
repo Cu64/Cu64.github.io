@@ -6,7 +6,18 @@
     <description>Recent content on Cu64</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 07 Sep 2021 00:00:00 +0700</lastBuildDate><atom:link href="https://cu64.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 08 Sep 2021 00:00:00 +0700</lastBuildDate><atom:link href="https://cu64.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Junior Hacking Talent - Mã Máy Writeup</title>
+      <link>https://cu64.github.io/posts/jht-ma-may/</link>
+      <pubDate>Wed, 08 Sep 2021 00:00:00 +0700</pubDate>
+      
+      <guid>https://cu64.github.io/posts/jht-ma-may/</guid>
+      <description>❯ nc 188.166.233.168 4790 ------------------------------------------------- | 080487b4 &amp;lt;print_flag&amp;gt;: | | 080487b4: 55 push ebp | | 080487b5: 89 e5 mov ebp,esp | | 080487b7: 53 push ebx | | .... | ------------------------------------------------- Looking at the Assembly, we notice that print_flag() resides at the address 0x080487b4, this is what we need to execute.
+There are multiple ways to jump to that function but what I&amp;rsquo;ll be using is push+ret.
+push 0x080487b4 ret Essentially, the push instruction will put 0x080487b4 at the top of the stack, which will later be popped off by ret and placed into EIP.</description>
+    </item>
+    
     <item>
       <title>Junior Hacking Talent - Buffer Overflow Writeup</title>
       <link>https://cu64.github.io/posts/jht-bof/</link>

